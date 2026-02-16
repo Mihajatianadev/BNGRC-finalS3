@@ -1,0 +1,33 @@
+CREATE DATABASE IF NOT EXISTS tp_validation CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE tp_bootstrap;
+
+CREATE TABLE IF NOT EXISTS user (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nom VARCHAR(100) NOT NULL,
+  prenom VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  role VARCHAR(255) DEFAULT NULL,
+  status ENUM('online', 'offline', 'away') DEFAULT 'offline',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+);
+
+CREATE TABLE IF NOT EXISTS conversation (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user1_id INT NOT NULL,
+  user2_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user1_id) REFERENCES user(id) ON DELETE CASCADE,
+  FOREIGN KEY (user2_id) REFERENCES user(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_conversation (user1_id, user2_id)
+);
+
+CREATE TABLE IF NOT EXISTS message (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  conversation_id INT NOT NULL,
+  sender_id INT NOT NULL,
+  content TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (conversation_id) REFERENCES conversation(id) ON DELETE CASCADE,
+  FOREIGN KEY (sender_id) REFERENCES user(id) ON DELETE CASCADE
+)

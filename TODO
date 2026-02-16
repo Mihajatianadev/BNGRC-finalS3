@@ -1,0 +1,43 @@
+c. Page pour voir la liste des objets des autres utilisateurs
+
+i. Fiche objet
+    |
+    -affiché les objets olona connectée
+    -affiché les objets disponible 
+    -bouton envoyé demande 
+    |
+    -page profil
+    -liste de tous les échanges (en attente) (action : detail )
+    -liste de tous les échanges historique
+    |
+    -pages details des echange (accepter ou refusé) 
+
+
+Mysql
+    |
+    table utilisateurs
+    |
+    table objet 
+        _id objet
+        _id user
+        _id-catégorie
+        _detail
+        _prix-estimatif
+    |
+    table image
+        _id-image
+        _id-obj
+        _lien-image
+    |
+    table echange
+        -id-echange
+        -id-obj1
+        -id-obj2
+        -status 
+        
+
+1. Proposition d’échange avec notre objet
+d. Page pour gérer les échanges avec d’autres utilisateurs
+i. Liste des propositions
+ii. Acceptation ou refus
+
