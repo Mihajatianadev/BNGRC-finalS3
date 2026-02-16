@@ -30,7 +30,23 @@ class AdminController {
         $pdo = Flight::db();
         self::exigerAdmin($pdo);
 
-        Flight::render('admin/Voir_tout_admin');
+        $repo = new DemandeRepository($pdo);
+
+        $req = Flight::request();
+        $id_ville = isset($req->query['ville']) && $req->query['ville'] !== '' ? (int)$req->query['ville'] : null;
+        $date_debut = isset($req->query['date_debut']) ? (string)$req->query['date_debut'] : '';
+        $date_fin = isset($req->query['date_fin']) ? (string)$req->query['date_fin'] : '';
+
+        $villes = $repo->listeVilles();
+        $lignes = $repo->listeDemandesDetaillees($id_ville, $date_debut, $date_fin);
+
+        Flight::render('admin/Voir_tout_admin', [
+            'villes' => $villes,
+            'lignes' => $lignes,
+            'id_ville' => $id_ville,
+            'date_debut' => $date_debut,
+            'date_fin' => $date_fin,
+        ]);
     }
 
     public static function aPropos() {
@@ -47,19 +63,19 @@ class AdminController {
         $repo = new DemandeRepository($pdo);
 
         $req = Flight::request();
+        $id_region = isset($req->query['region']) && $req->query['region'] !== '' ? (int)$req->query['region'] : null;
         $id_ville = isset($req->query['ville']) && $req->query['ville'] !== '' ? (int)$req->query['ville'] : null;
-        $date_debut = isset($req->query['date_debut']) ? (string)$req->query['date_debut'] : '';
-        $date_fin = isset($req->query['date_fin']) ? (string)$req->query['date_fin'] : '';
 
-        $villes = $repo->listeVilles();
-        $lignes = $repo->listeDemandesDetaillees($id_ville, $date_debut, $date_fin);
+        $regions = $repo->listeRegions();
+        $villes = $id_region ? $repo->listeVillesParRegion($id_region) : [];
+        $demandes = $repo->listeDemandesPourDashboard($id_region, $id_ville);
 
         Flight::render('admin/dashboard', [
+            'regions' => $regions,
             'villes' => $villes,
-            'lignes' => $lignes,
+            'demandes' => $demandes,
+            'id_region' => $id_region,
             'id_ville' => $id_ville,
-            'date_debut' => $date_debut,
-            'date_fin' => $date_fin,
         ]);
     }
 }
