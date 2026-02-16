@@ -172,4 +172,143 @@ class DemandeRepository {
 
         return $resultats;
     }
+
+    public function getInfoDemande($id_demande) {
+        $st = $this->pdo->prepare('
+            SELECT
+                demandes.id_demande,
+                demandes.id_ville,
+                villes.nom AS ville,
+                demandes.id_produit,
+                produits.nom AS produit,
+                produits.unite,
+                produits.id_categorie,
+                categories.nom AS categorie,
+                demandes.quantite_demandee,
+                demandes.date_demande,
+                demandes.statut
+            FROM demandes
+            JOIN villes ON demandes.id_ville = villes.id_ville
+            JOIN produits ON demandes.id_produit = produits.id_produit
+            JOIN categories ON produits.id_categorie = categories.id_categorie
+            WHERE demandes.id_demande = ?
+            LIMIT 1
+        ');
+        $st->execute([(int)$id_demande]);
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function listeCategories() {
+        $st = $this->pdo->query('SELECT id_categorie, nom FROM categories ORDER BY nom');
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listeProduitsParCategorie($id_categorie) {
+        $st = $this->pdo->prepare('SELECT id_produit, nom, unite FROM produits WHERE id_categorie = ? ORDER BY nom');
+        $st->execute([(int)$id_categorie]);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listeDistributionsParDemande($id_demande) {
+        $this->assurerDistributionsIdProduit();
+
+        $st = $this->pdo->prepare('
+            SELECT
+                distributions.id_distribution,
+                distributions.quantite_envoyee,
+                distributions.date_distribution,
+                produits.nom AS produit,
+                produits.unite
+            FROM distributions
+            JOIN produits ON distributions.id_produit = produits.id_produit
+            WHERE distributions.id_demande = ?
+            ORDER BY distributions.date_distribution DESC
+        ');
+        $st->execute([(int)$id_demande]);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getQuantiteStock($id_produit) {
+        $st = $this->pdo->prepare('SELECT quantite_disponible FROM stock WHERE id_produit = ? LIMIT 1');
+        $st->execute([(int)$id_produit]);
+        $val = $st->fetchColumn();
+        if ($val === false) {
+            return null;
+        }
+        return (float)$val;
+    }
+
+    public function creerStockSiAbsent($id_produit, $quantite_initiale = 0) {
+        $st = $this->pdo->prepare('SELECT id_stock FROM stock WHERE id_produit = ? LIMIT 1');
+        $st->execute([(int)$id_produit]);
+        $id_stock = $st->fetchColumn();
+        if ($id_stock) {
+            return (int)$id_stock;
+        }
+
+        $st2 = $this->pdo->prepare('INSERT INTO stock(id_produit, quantite_disponible) VALUES(?, ?)');
+        $st2->execute([(int)$id_produit, (float)$quantite_initiale]);
+        return (int)$this->pdo->lastInsertId();
+    }
+
+    public function decrementerStock($id_produit, $quantite) {
+        $st = $this->pdo->prepare('UPDATE stock SET quantite_disponible = quantite_disponible - ? WHERE id_produit = ?');
+        $st->execute([(float)$quantite, (int)$id_produit]);
+    }
+
+    public function insererDistribution($id_demande, $quantite_envoyee) {
+        $demande = $this->getInfoDemande($id_demande);
+        if (!$demande) {
+            return 0;
+        }
+
+        return $this->insererDistributionLibre((int)$id_demande, (int)$demande['id_produit'], (float)$quantite_envoyee);
+    }
+
+    public function insererDistributionLibre($id_demande, $id_produit, $quantite_envoyee) {
+        $this->assurerDistributionsIdProduit();
+
+        $st = $this->pdo->prepare('INSERT INTO distributions(id_demande, id_produit, quantite_envoyee, date_distribution) VALUES(?, ?, ?, NOW())');
+        $st->execute([(int)$id_demande, (int)$id_produit, (float)$quantite_envoyee]);
+        return (int)$this->pdo->lastInsertId();
+    }
+
+    public function getResteADistribuerPourDemande($id_demande) {
+        $this->assurerDistributionsIdProduit();
+
+        $st = $this->pdo->prepare('
+            SELECT
+                demandes.quantite_demandee - COALESCE(SUM(CASE WHEN distributions.id_produit = demandes.id_produit OR distributions.id_produit IS NULL THEN distributions.quantite_envoyee ELSE 0 END), 0) AS reste
+            FROM demandes
+            LEFT JOIN distributions ON distributions.id_demande = demandes.id_demande
+            WHERE demandes.id_demande = ?
+            GROUP BY demandes.id_demande, demandes.quantite_demandee
+        ');
+        $st->execute([(int)$id_demande]);
+        $reste = $st->fetchColumn();
+        if ($reste === false) {
+            return 0.0;
+        }
+        return (float)$reste;
+    }
+
+    public function mettreAJourStatutDemande($id_demande, $statut) {
+        $st = $this->pdo->prepare('UPDATE demandes SET statut = ? WHERE id_demande = ?');
+        $st->execute([(string)$statut, (int)$id_demande]);
+    }
+
+    private function assurerDistributionsIdProduit() {
+        // Ajout minimal (si absent) pour permettre les dons libres.
+        // + backfill pour les anciennes distributions.
+        $st = $this->pdo->prepare("SHOW COLUMNS FROM distributions LIKE 'id_produit'");
+        $st->execute();
+        $col = $st->fetch(PDO::FETCH_ASSOC);
+        if ($col) {
+            return;
+        }
+
+        $this->pdo->exec('ALTER TABLE distributions ADD COLUMN id_produit INT NULL AFTER id_demande');
+        $this->pdo->exec('UPDATE distributions JOIN demandes ON distributions.id_demande = demandes.id_demande SET distributions.id_produit = demandes.id_produit WHERE distributions.id_produit IS NULL');
+    }
 }

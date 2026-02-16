@@ -62,8 +62,16 @@
             <?php else: ?>
                 <?php foreach ($demandes as $demande): ?>
                     <tr>
-                        <td class="fw-bold"><?= htmlspecialchars($demande['ville']) ?></td>
-                        <td class="text-end fw-bold"><?= (int)$demande['nombre_produits'] ?></td>
+                        <td class="fw-bold">
+                            <a class="text-decoration-none" href="/demande/<?= urlencode((string)$demande['id_demande']) ?>">
+                                <?= htmlspecialchars($demande['ville']) ?>
+                            </a>
+                        </td>
+                        <td class="text-end fw-bold">
+                            <a class="text-decoration-none" href="/demande/<?= urlencode((string)$demande['id_demande']) ?>">
+                                <?= (int)$demande['nombre_produits'] ?>
+                            </a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

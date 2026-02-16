@@ -28,3 +28,15 @@ Flight::route('GET /admin/dashboard', ['AdminController', 'dashboard']);
 Flight::route('GET /demande/@id_demande', function($id_demande) {
     DemandeController::showDemandeDetail($id_demande);
 });
+
+Flight::route('POST /admin/donner', function() {
+    DemandeController::postDistribuerDon();
+});
+
+Flight::route('GET /api/produits', function() {
+    DemandeController::getProduitsParCategorieJson();
+});
+
+Flight::route('GET /api/stock/@id_produit', function($id_produit) {
+    DemandeController::getStockProduitJson($id_produit);
+});
