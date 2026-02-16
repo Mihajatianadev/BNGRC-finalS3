@@ -4,6 +4,7 @@ require_once __DIR__ . '/services/Validator.php';
 require_once __DIR__ . '/services/UserService.php';
 require_once __DIR__ . '/repositories/UserRepository.php';
 require_once __DIR__ . '/controllers/ObjetController.php';
+require_once __DIR__ . '/controllers/DemandeController.php';
 
 require_once __DIR__ . '/controllers/AdminController.php';
 
@@ -24,4 +25,6 @@ Flight::route('GET /admin/voir-tout', ['AdminController', 'voirTout']);
 Flight::route('GET /admin/a-propos', ['AdminController', 'aPropos']);
 Flight::route('GET /admin/dashboard', ['AdminController', 'dashboard']);
 
-
+Flight::route('GET /demande/@id_demande', function($id_demande) {
+    DemandeController::showDemandeDetail($id_demande);
+});
