@@ -19,7 +19,13 @@ Flight::route('POST /api/validate/register', ['AuthController', 'validateRegiste
 
 
 
+Flight::route('GET /', function() {
+    Flight::redirect('/accueil');
+});
+
 Flight::route('GET /accueil', ['ObjetController', 'showListe']);
+Flight::route('GET /actualites', ['ObjetController', 'showActualites']);
+Flight::route('GET /contacts', ['ObjetController', 'showContacts']);
 
 Flight::route('GET /admin/voir-tout', ['AdminController', 'voirTout']);
 Flight::route('GET /admin/a-propos', ['AdminController', 'aPropos']);

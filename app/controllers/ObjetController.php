@@ -5,11 +5,17 @@ class ObjetController {
 
     public static function showListe()
 {
-    $objets = ObjetRepository::getAllList();
+        Flight::render('auth/accueil', []);
+}
 
-        Flight::render('auth/accueil', [
-            'objets' => $objets
-        ]);
+    public static function showActualites()
+{
+        Flight::render('auth/actualites', []);
+}
+
+    public static function showContacts()
+{
+        Flight::render('auth/contacts', []);
 }
 
 }
