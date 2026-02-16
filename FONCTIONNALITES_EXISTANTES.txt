@@ -1,0 +1,130 @@
+FONCTIONNALITES EXISTANTES (état actuel du projet)
+
+1) Routing / Framework
+- Application PHP basée sur Flight (mikecao/flight).
+- Point d'entrée: public/index.php
+- Bootstrap: app/bootstrap.php (PDO + views path + routes)
+
+2) Base de données
+- Script: database/base.sql
+- Tables: roles, users, regions, villes, categories, produits, stock, dons, demandes, distributions
+- Vues: vue_demandes_detaillees, vue_stock_detaille, vue_demandes_en_attente, vue_demandes_par_region
+
+3) Pages / Views
+- app/views/auth/register.php
+- app/views/auth/accueil.php
+
+4) Controllers
+- AuthController: affiche register + validation ajax + post register (implémentation en cours/à corriger selon schéma DB)
+- ObjetController: affiche accueil avec liste objets
+
+5) Repositories / Services
+- UserRepository + UserService + Validator (inscription)
+- ObjetRepository (liste objets + image)
+
+6) Modifications / Ajouts réalisés (détaillé)
+
+6.1) Session (modifié)
+- Fichier: app/bootstrap.php
+- Changement: ajout de session_start() au début du bootstrap.
+- But: permettre la persistance d'un utilisateur connecté via $_SESSION (nécessaire pour l'accès admin).
+
+6.2) Authentification (ajouté)
+
+Pages / Views (ajouté)
+- Fichier: app/views/login.php
+- URL: /login (GET)
+- Fonctionnalité:
+  - Formulaire simple (email + mot_de_passe)
+  - Affichage d'un message d'erreur global si identifiants invalides
+
+Contrôleur (modifié)
+- Fichier: app/controllers/AuthController.php
+- Méthodes ajoutées:
+  - showLogin(): affiche la view login
+  - postLogin(): traite le formulaire login
+  - logout(): déconnecte l'utilisateur
+
+Service (ajouté)
+- Fichier: app/services/AuthService.php
+- Méthodes:
+  - connecter($email, $mot_de_passe)
+    - Lit l'utilisateur dans la table users via email
+    - Vérifie mot_de_passe
+      - compatible mot de passe en clair (base.sql) OU hashé (password_verify)
+    - Stocke en session:
+      - $_SESSION['id_user']
+      - $_SESSION['id_role']
+  - deconnecter(): supprime id_user et id_role de la session
+
+Routes (modifié)
+- Fichier: app/routes.php
+- Routes ajoutées:
+  - GET /login  -> AuthController::showLogin
+  - POST /login -> AuthController::postLogin
+  - GET /logout -> AuthController::logout
+
+Flux de navigation (résumé)
+- Utilisateur visite /login
+- Si authentification OK:
+  - si id_role == 2 (ADMIN) => redirection vers /admin/dashboard
+  - sinon => redirection vers /accueil
+
+6.3) Dashboard Admin des demandes (ajouté)
+
+Routes (modifié)
+- Fichier: app/routes.php
+- Route ajoutée:
+  - GET /admin/dashboard -> AdminController::dashboard
+
+Contrôleur (ajouté)
+- Fichier: app/controllers/AdminController.php
+- Fonctionnalités:
+  - Vérifie l'accès ADMIN via la session:
+    - exige $_SESSION['id_user']
+    - lit users.id_role dans la base
+    - autorise seulement id_role == 2
+  - Charge les données du dashboard via DemandeRepository
+  - Envoie les variables à la view admin-dashboard
+
+Repository (ajouté)
+- Fichier: app/repositories/DemandeRepository.php
+- Méthodes:
+  - listeRegions(): liste des régions pour le filtre
+  - listeVillesParRegion($id_region): liste des villes selon la région
+  - listeDemandesPourDashboard($id_region, $id_ville):
+    - Affiche les demandes sous forme agrégée
+    - Filtrage optionnel:
+      - par région
+      - puis par ville
+    - Calcul "Nombre de produits demandés" PAR DEMANDE:
+      - COUNT(DISTINCT d.id_produit)
+      - groupé par (ville + date_demande + statut)
+      - permet d'avoir plusieurs demandes pour une même ville (lignes séparées)
+
+View (ajouté)
+- Fichier: app/views/admin-dashboard.php
+- Fonctionnalités:
+  - Formulaire GET avec 2 filtres:
+    - Région (active)
+    - Ville (désactivé tant qu'aucune région n'est choisie)
+  - Affichage des demandes en cards horizontales:
+    - à gauche: VILLE
+    - à droite: nombre_produits
+  - Infos secondaires affichées (petit texte): région/date/statut
+
+CSS (ajouté)
+- Fichier: public/css/admin-dashboard.css
+- Rôle: styles simples (fond + arrondi cartes)
+- Inclus actuellement dans la page login (et peut être inclus aussi dans le dashboard si souhaité)
+
+6.4) Fichiers "compatibilité" demandés (ajouté)
+- Fichier: admin-dashboard.php (racine)
+- Fichier: admin dashboard.php (racine)
+- Rôle: wrappers qui chargent public/index.php.
+- Remarque: dans ce projet, l'accès normal se fait via les routes Flight, donc l'URL recommandée est /admin/dashboard.
+
+7) Remarques techniques (important pour le groupe)
+- Le script database/base.sql définit users avec les colonnes: (id_user, nom, email, mot_de_passe, id_role, date_creation).
+- Certaines parties "inscription" existantes (UserRepository/UserService/Validator + register.php) ne correspondent pas encore à ce schéma et peuvent nécessiter une harmonisation.
+- Le fichier public/.htaccess contient encore un RewriteBase hérité ("flight-mvc-validation-skeleton"). Selon l'emplacement réel du projet sur Apache, cela peut nécessiter un ajustement.

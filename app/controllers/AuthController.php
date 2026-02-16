@@ -3,6 +3,49 @@
 
 class AuthController {
 
+  public static function showLogin() {
+    Flight::render('login', [
+      'email' => '',
+      'erreur_globale' => ''
+    ]);
+  }
+
+  public static function postLogin() {
+    require_once __DIR__ . '/../services/AuthService.php';
+
+    $pdo = Flight::db();
+    $auth = new AuthService($pdo);
+
+    $req = Flight::request();
+    $email = (string)($req->data->email ?? '');
+    $mot_de_passe = (string)($req->data->mot_de_passe ?? '');
+
+    $res = $auth->connecter($email, $mot_de_passe);
+    if ($res['ok']) {
+      if ((int)$res['id_role'] === 2) {
+        Flight::redirect('/admin/dashboard');
+        return;
+      }
+
+      Flight::redirect('/accueil');
+      return;
+    }
+
+    Flight::render('login', [
+      'email' => $email,
+      'erreur_globale' => $res['message'] ?? 'Erreur de connexion.'
+    ]);
+  }
+
+  public static function logout() {
+    require_once __DIR__ . '/../services/AuthService.php';
+    $pdo = Flight::db();
+    $auth = new AuthService($pdo);
+    $auth->deconnecter();
+
+    Flight::redirect('/login');
+  }
+
   
   public static function showRegister() {
     Flight::render('auth/register', [
