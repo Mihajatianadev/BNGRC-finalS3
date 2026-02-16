@@ -28,8 +28,8 @@
 
         <nav class="vitrine-links" aria-label="Navigation principale">
             <a class="vitrine-link active" href="/accueil">Accueil</a>
-            <a class="vitrine-link" href="#contacts">Contacts</a>
-            <a class="vitrine-link" href="#actualites">Actualités</a>
+            <a class="vitrine-link" href="/contacts">Contacts</a>
+            <a class="vitrine-link" href="/actualites">Actualités</a>
         </nav>
 
         <div class="vitrine-actions">
