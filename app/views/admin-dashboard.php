@@ -48,10 +48,13 @@
     <?php else: ?>
         <div class="d-flex flex-column gap-3">
             <?php foreach ($demandes as $demande): ?>
+                <a href="/demande/<?= urlencode($demande['id_demande']) ?>" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="fw-bold"><?= htmlspecialchars($demande['ville']) ?></div>
+                            <div class="fw-bold">
+                                    <?= htmlspecialchars($demande['ville']) ?>
+                            </div>
                             <div class="text-muted small">
                                 Région: <?= htmlspecialchars($demande['region']) ?>
                                 <?php if (!empty($demande['date_demande'])): ?>
@@ -67,7 +70,9 @@
                         </div>
                     </div>
                 </div>
+                </a>
             <?php endforeach; ?>
+
         </div>
     <?php endif; ?>
 

@@ -23,6 +23,7 @@ class DemandeRepository {
 
         $sql = "
             SELECT
+                d.id_demande,
                 r.nom AS region,
                 v.id_ville,
                 v.nom AS ville,
@@ -56,4 +57,18 @@ class DemandeRepository {
         $st->execute($params);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getInfoDemande($id_demande) {
+        $sql = "
+            SELECT *
+            FROM vue_demandes_detaillees d
+            WHERE d.id_demande = ?
+        ";
+
+        $st = $this->pdo->prepare($sql);
+        $st->execute([(int)$id_demande]);
+        return $st->fetch(PDO::FETCH_ASSOC); 
+    }
+
+
 }
