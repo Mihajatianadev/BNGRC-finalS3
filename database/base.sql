@@ -166,3 +166,10 @@ VALUES ('Admin Test', 'admin@test.com', 'admin123', 2, NOW());
 
 INSERT INTO users (nom, email, mot_de_passe, id_role, date_creation)
 VALUES ('User Test', 'user@test.com', 'user123', 1, NOW());
+
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES 
+(1, 1000),  
+(2, 500),    
+(3, 300),    
+(4, 200);    
