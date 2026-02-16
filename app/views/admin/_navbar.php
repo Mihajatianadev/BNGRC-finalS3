@@ -13,13 +13,13 @@ $actif = function ($prefix) use ($chemin_actuel) {
     <div class="collapse navbar-collapse" id="navbarAdmin">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link <?= $actif('/admin/dashboard') ?>" href="/admin/dashboard">Accueil</a>
+          <a class="nav-link <?= $actif('/admin/voir-tout') ?>" href="/admin/voir-tout">Accueil</a>
         </li>
         <li class="nav-item">
           <a class="nav-link <?= $actif('/admin/a-propos') ?>" href="/admin/a-propos">A propos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $actif('/admin/voir-tout') ?>" href="/admin/voir-tout">Distribuer dons</a>
+          <a class="nav-link <?= $actif('/admin/dashboard') ?>" href="/admin/dashboard">Distribuer dons</a>
         </li>
       </ul>
       <div class="d-flex">
