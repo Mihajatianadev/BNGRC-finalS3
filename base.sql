@@ -1,6 +1,10 @@
 CREATE DATABASE IF NOT EXISTS 4106_4132_4381;
 USE 4106_4132_4381;
 
+-- =========================
+-- TABLES
+-- =========================
+
 CREATE TABLE roles (
     id_role INT AUTO_INCREMENT PRIMARY KEY,
     nom_role VARCHAR(20) NOT NULL
@@ -77,37 +81,45 @@ CREATE TABLE distributions (
     FOREIGN KEY (id_demande) REFERENCES demandes(id_demande)
 );
 
--- INSERTION DES ROLES
+-- =========================
+-- INSERTS
+-- =========================
+
+-- ROLES
 INSERT INTO roles (nom_role) VALUES ('USER');
 INSERT INTO roles (nom_role) VALUES ('ADMIN');
 
--- INSERTION DES CATEGORIES
+-- CATEGORIES
 INSERT INTO categories (nom) VALUES ('Nature');
-INSERT INTO categories (nom) VALUES ('Vêtement');
-INSERT INTO categories (nom) VALUES ('Médical');
+INSERT INTO categories (nom) VALUES ('Vetement');
+INSERT INTO categories (nom) VALUES ('Medical');
 
--- INSERTION DES REGIONS
+-- REGIONS
 INSERT INTO regions (nom) VALUES ('Analamanga');
 INSERT INTO regions (nom) VALUES ('Atsinanana');
 
--- INSERTION DES VILLES
+-- VILLES (après les regions)
 INSERT INTO villes (nom, id_region) VALUES ('Antananarivo', 1);
 INSERT INTO villes (nom, id_region) VALUES ('Toamasina', 2);
 
--- INSERTION DES PRODUITS
+-- PRODUITS (après categories)
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Riz', 'Kg', 1);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Huile', 'Litre', 1);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Couverture', 'Piece', 2);
-INSERT INTO produits (nom, unite, id_categorie) VALUES ('Médicament', 'Boite', 3);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Medicament', 'Boite', 3);
 
--- INSERTION DE 2 DEMANDES
+-- DEMANDES
 INSERT INTO demandes (id_ville, id_produit, quantite_demandee, date_demande, statut)
 VALUES (1, 1, 500, '2026-02-16 10:00:00', 'EN_ATTENTE');
 
 INSERT INTO demandes (id_ville, id_produit, quantite_demandee, date_demande, statut)
 VALUES (2, 3, 200, '2026-02-16 10:30:00', 'EN_ATTENTE');
 
--- VUE DES DEMANDES DETAILLEES
+-- =========================
+-- VUES
+-- =========================
+
+-- Vue détaillée des demandes
 CREATE VIEW vue_demandes_detaillees AS
 SELECT 
     d.id_demande,
@@ -123,7 +135,7 @@ JOIN villes v ON d.id_ville = v.id_ville
 JOIN regions r ON v.id_region = r.id_region
 JOIN produits p ON d.id_produit = p.id_produit;
 
--- VUE DU STOCK DETAILLE
+-- Vue du stock détaillé
 CREATE VIEW vue_stock_detaille AS
 SELECT 
     p.nom AS produit,
@@ -132,13 +144,13 @@ SELECT
 FROM stock s
 JOIN produits p ON s.id_produit = p.id_produit;
 
--- VUE DES DEMANDES EN ATTENTE
+-- Vue des demandes en attente
 CREATE VIEW vue_demandes_en_attente AS
 SELECT *
 FROM vue_demandes_detaillees
 WHERE statut = 'EN_ATTENTE';
 
--- VUE DES DEMANDES PAR REGION
+-- Vue des demandes par région
 CREATE VIEW vue_demandes_par_region AS
 SELECT 
     r.nom AS region,
