@@ -45,6 +45,10 @@ CREATE TABLE produits (
     FOREIGN KEY (id_categorie) REFERENCES categories(id_categorie)
 );
 
+ALTER TABLE produits
+ADD COLUMN prix_unitaire DOUBLE NOT NULL DEFAULT 0;
+
+
 CREATE TABLE stock (
     id_stock INT AUTO_INCREMENT PRIMARY KEY,
     id_produit INT NOT NULL,
@@ -107,6 +111,11 @@ INSERT INTO produits (nom, unite, id_categorie) VALUES ('Riz', 'Kg', 1);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Huile', 'Litre', 1);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Couverture', 'Piece', 2);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Medicament', 'Boite', 3);
+
+UPDATE produits SET prix_unitaire = 2000 WHERE nom = 'Riz';         -- / Kg
+UPDATE produits SET prix_unitaire = 5000 WHERE nom = 'Huile';       --  / Litre
+UPDATE produits SET prix_unitaire = 10000 WHERE nom = 'Couverture'; --  / Pièce
+UPDATE produits SET prix_unitaire = 16000 WHERE nom = 'Medicament'; -- / Boîte
 
 -- DEMANDES
 INSERT INTO demandes (id_ville, id_produit, quantite_demandee, date_demande, statut)
