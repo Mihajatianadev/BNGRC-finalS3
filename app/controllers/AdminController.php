@@ -78,4 +78,21 @@ class AdminController {
             'id_ville' => $id_ville,
         ]);
     }
+
+    public static function stock() {
+        $pdo = Flight::db();
+        self::exigerAdmin($pdo);
+
+        $repo = new DemandeRepository($pdo);
+        $stocks = $repo->listeStockDetaille();
+
+        $erreur = (string)(Flight::request()->query['erreur'] ?? '');
+        $success = (string)(Flight::request()->query['success'] ?? '');
+
+        Flight::render('admin/stock', [
+            'stocks' => $stocks,
+            'erreur' => $erreur,
+            'success' => $success,
+        ]);
+    }
 }

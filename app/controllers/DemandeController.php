@@ -121,6 +121,17 @@ class DemandeController {
         echo json_encode($produits);
     }
 
+    public static function getCategoriesJson() {
+        $pdo = Flight::db();
+        self::exigerAdmin($pdo);
+
+        $repo = new DemandeRepository($pdo);
+        $categories = $repo->listeCategories();
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($categories);
+    }
+
     public static function getStockProduitJson($id_produit) {
         $pdo = Flight::db();
         self::exigerAdmin($pdo);

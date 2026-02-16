@@ -22,6 +22,23 @@ class DemandeRepository {
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function listeStockDetaille() {
+        $st = $this->pdo->query('
+            SELECT
+                stock.id_stock,
+                stock.id_produit,
+                produits.nom AS produit,
+                produits.unite,
+                categories.nom AS categorie,
+                stock.quantite_disponible
+            FROM stock
+            JOIN produits ON stock.id_produit = produits.id_produit
+            JOIN categories ON produits.id_categorie = categories.id_categorie
+            ORDER BY categories.nom, produits.nom
+        ');
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function listeDemandesPourDashboard($id_region = null, $id_ville = null) {
         // On regroupe une "demande" par (ville + date_demande + statut).
         // Cela permet d'avoir plusieurs produits dans une même demande si la base contient plusieurs lignes pour la même ville à la même date.

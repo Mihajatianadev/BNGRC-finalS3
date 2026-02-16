@@ -1,21 +1,72 @@
 <?php
+require_once __DIR__ . '/../repositories/BesoinRepository.php';
+require_once __DIR__ . '/../repositories/DonRepository.php';
+
 class BesoinController {
     public static function postBesoin() {
         $pdo = Flight::db();
+        self::exigerAdmin($pdo);
+
         $repo = new BesoinRepository($pdo);
+        $donRepo = new DonRepository($pdo);
+        $req = Flight::request();
 
-        // Récupération des données envoyées (ex: via formulaire ou JSON)
-        $id_ville = $_POST['id_ville'];
-        $nomProduit = $_POST['nom_produit'];
-        $unite = $_POST['unite'];
-        $id_categorie = $_POST['id_categorie'];
-        $quantite = $_POST['quantite'];
+        $id_ville = (int)($req->data->id_ville ?? 0);
+        $nomProduit = trim((string)($req->data->nom_produit ?? ''));
+        $unite = trim((string)($req->data->unite ?? ''));
+        $id_categorie = (int)($req->data->id_categorie ?? 0);
+        $nouvelle_categorie = trim((string)($req->data->nouvelle_categorie ?? ''));
+        $quantite = (float)($req->data->quantite ?? 0);
 
+        if ($id_ville <= 0 || $nomProduit === '' || $quantite <= 0) {
+            Flight::redirect('/admin/voir-tout?erreur=' . urlencode('Champs invalides.'));
+            return;
+        }
+
+        if (!in_array($unite, ['Kg', 'L'], true)) {
+            Flight::redirect('/admin/voir-tout?erreur=' . urlencode('Unité invalide.'));
+            return;
+        }
+
+        $pdo->beginTransaction();
         try {
-            $id_demande = $repo->insertBesoin($id_ville, $nomProduit, $unite, $id_categorie, $quantite);
-            Flight::json(['success' => true, 'id_demande' => $id_demande]);
+            if ($nouvelle_categorie !== '') {
+                $id_categorie = $donRepo->getOrCreateCategorie($nouvelle_categorie);
+            }
+            if ($id_categorie <= 0) {
+                throw new Exception('Catégorie invalide.');
+            }
+
+            $repo->insertBesoin($id_ville, $nomProduit, $unite, $id_categorie, $quantite);
+            $pdo->commit();
         } catch (Exception $e) {
-            Flight::json(['success' => false, 'error' => $e->getMessage()]);
+            $pdo->rollBack();
+            Flight::redirect('/admin/voir-tout?erreur=' . urlencode($e->getMessage()));
+            return;
+        }
+
+        Flight::redirect('/admin/voir-tout?success=' . urlencode('Besoin ajouté.'));
+    }
+
+    private static function exigerAdmin(PDO $pdo) {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $id_user = $_SESSION['id_user'] ?? null;
+        if (!$id_user) {
+            http_response_code(403);
+            echo 'Accès refusé.';
+            exit;
+        }
+
+        $st = $pdo->prepare('SELECT id_role FROM users WHERE id_user = ? LIMIT 1');
+        $st->execute([(int)$id_user]);
+        $id_role = (int)($st->fetchColumn() ?? 0);
+        if ($id_role !== 2) {
+            http_response_code(403);
+            echo 'Accès refusé.';
+            exit;
         }
     }
 }

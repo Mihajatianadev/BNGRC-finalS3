@@ -5,6 +5,8 @@ require_once __DIR__ . '/services/UserService.php';
 require_once __DIR__ . '/repositories/UserRepository.php';
 require_once __DIR__ . '/controllers/ObjetController.php';
 require_once __DIR__ . '/controllers/DemandeController.php';
+require_once __DIR__ . '/controllers/DonController.php';
+require_once __DIR__ . '/controllers/BesoinController.php';
 
 require_once __DIR__ . '/controllers/AdminController.php';
 
@@ -43,6 +45,20 @@ Flight::route('GET /api/produits', function() {
     DemandeController::getProduitsParCategorieJson();
 });
 
+Flight::route('GET /api/categories', function() {
+    DemandeController::getCategoriesJson();
+});
+
 Flight::route('GET /api/stock/@id_produit', function($id_produit) {
     DemandeController::getStockProduitJson($id_produit);
 });
+
+Flight::route('POST /admin/don-global', function() {
+    DonController::postDonGlobal();
+});
+
+Flight::route('POST /admin/besoin', function() {
+    BesoinController::postBesoin();
+});
+
+Flight::route('GET /admin/stock', ['AdminController', 'stock']);
