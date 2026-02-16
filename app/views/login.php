@@ -14,13 +14,13 @@
             <div class="login2-grid">
 
                 <div class="login2-left">
-                    <div class="login2-brand">
-                        <div class="login2-brand-mark"></div>
-                        <div class="login2-brand-name">SoftQA</div>
-                    </div>
+                 <div class="login2-brand-mark">
+    <img src="assets/images/bngrc.png" width="35" height="35" alt="BNGRC Logo" style="border-radius: 10px; object-fit: contain;">
+</div>
+<div class="login2-brand-name">BNGRC</div>
 
-                    <div class="login2-title">Welcome Back!</div>
-                    <div class="login2-desc">Sign in to access your dashboard and continue optimizing your QA process.</div>
+                    <div class="login2-title">Connexion en tant qu'admin</div>
+                    <div class="login2-desc">Connectez-vous pour suivre les dons </div>
 
                     <?php if (!empty($erreur_globale)): ?>
                         <div class="alert alert-danger mt-3"><?= htmlspecialchars($erreur_globale) ?></div>
@@ -31,48 +31,30 @@
                             <label class="form-label">Email</label>
                             <div class="input-group login2-input">
                                 <span class="input-group-text">
-                                    <span class="login2-ico" aria-hidden="true"></span>
+                                    <span class="login2-ico"><img src="assets/bootstrap-icons/envelope-at.svg"></span>
                                 </span>
-                                <input name="email" type="email" class="form-control" placeholder="Enter your email" value="<?= htmlspecialchars($email ?? '') ?>" required>
+                                <input name="email" type="email" class="form-control" placeholder="Entrer votre email" value="<?= htmlspecialchars($email ?? '') ?>" required>
                             </div>
                         </div>
 
                         <div class="mb-2">
-                            <label class="form-label">Password</label>
+                            <label class="form-label">Mot de passe</label>
                             <div class="input-group login2-input">
                                 <span class="input-group-text">
-                                    <span class="login2-ico" aria-hidden="true"></span>
+                                    <span class="login2-ico" aria-hidden="true"><img src="assets/bootstrap-icons/lock.svg"></span>
                                 </span>
-                                <input name="mot_de_passe" type="password" class="form-control" placeholder="Enter your password" required>
-                                <span class="input-group-text">
-                                    <span class="login2-ico" aria-hidden="true"></span>
-                                </span>
+                                <input name="mot_de_passe" type="password" class="form-control" placeholder="Entrer votre mot de passe" required>
+
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end mb-3">
-                            <a class="login2-link" href="#">Forgot Password?</a>
-                        </div>
 
-                        <button class="btn login2-btn w-100" type="submit">Sign In</button>
+                        <button class="btn login2-btn w-100" type="submit">Se connecter</button>
                     </form>
 
-                    <div class="login2-or"><span>OR</span></div>
-
-                    <div class="d-grid gap-2">
-                        <button type="button" class="login2-social">
-                            <span class="login2-social-ico" aria-hidden="true"></span>
-                            Continue with Google
-                        </button>
-                        <button type="button" class="login2-social">
-                            <span class="login2-social-ico" aria-hidden="true"></span>
-                            Continue with Apple
-                        </button>
-                    </div>
-
                     <div class="login2-signup">
-                        Don't have an Account?
-                        <a class="login2-link" href="#">Sign Up</a>
+                        Pas de compte ?
+                        <a class="login2-link" href="#">S'inscrire</a>
                     </div>
 
                     <div class="login2-note">Pour tester avec base.sql : admin@test.com / admin123</div>
@@ -80,14 +62,15 @@
 
                 <div class="login2-right">
                     <div class="login2-right-inner">
-                        <div class="login2-right-title">Revolutionize QA with<br>Smarter Automation</div>
-                        <div class="login2-quote">“SoftQA has completely transformed our testing process. It’s reliable, efficient, and ensures our releases are always top-notch.”</div>
-
+                        <div class="login2-right-title">“Izay tsara fiomanana tsy ho tampohin'ny Loza”</div>
+                        <div class="login2-profile-name">"Ceux qui savent se preparer seront à l'abri du danger"<br></div>
+                          <div class="login2-note"></div>
+                        
                         <div class="login2-profile">
-                            <div class="login2-avatar" style="background-image: url('');"></div>
+                            <div class="login2-avatar" style="background-image: url('assets/images/WhatsApp-Image-2025-11-17-a-09.07.47_a717b263.jpg');"></div>
                             <div>
-                                <div class="login2-profile-name">Michael Carter</div>
-                                <div class="login2-profile-role">Software Engineer at DevCore</div>
+                                <div class="login2-profile-name">RAMANANTSOA Gabriel </div>
+                                <div class="login2-profile-role">Directeur Général</div>
                             </div>
                         </div>
 

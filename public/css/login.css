@@ -1,12 +1,12 @@
 :root {
   --l2-bg: #f6f8fa;
-  --l2-text: #0d1b1e;
-  --l2-muted: rgba(13, 27, 30, 0.62);
-  --l2-border: rgba(13, 27, 30, 0.12);
-  --l2-teal: #0b4d4b;
-  --l2-teal2: #0a3f3d;
-  --l2-btn: #0b4d4b;
-  --l2-btn-hover: #0a4240;
+  --l2-text: #0d101e;
+  --l2-muted: rgba(18, 13, 30, 0.62);
+  --l2-border: rgba(18, 13, 30, 0.12);
+  --l2-teal: #b74604;
+  --l2-teal2: #120a3f;
+  --l2-btn: #140b4d;
+  --l2-btn-hover: #b74604;
 }
 
 body.login2-page {
@@ -63,12 +63,12 @@ body.login2-page {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: rgba(11, 77, 75, 0.12);
-  border: 1px solid rgba(11, 77, 75, 0.25);
+
 }
 
 .login2-brand-name {
   font-weight: 700;
+  
 }
 
 .login2-title {
@@ -110,8 +110,6 @@ body.login2-page {
   width: 18px;
   height: 18px;
   display: inline-block;
-  border-radius: 6px;
-  background: rgba(13, 27, 30, 0.10);
 }
 
 .login2-link {
