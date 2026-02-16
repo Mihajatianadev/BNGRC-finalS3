@@ -23,7 +23,7 @@ class AuthController {
     $res = $auth->connecter($email, $mot_de_passe);
     if ($res['ok']) {
       if ((int)$res['id_role'] === 2) {
-        Flight::redirect('/admin/dashboard');
+        Flight::redirect('/admin/voir-tout');
         return;
       }
 
