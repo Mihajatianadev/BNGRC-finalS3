@@ -159,3 +159,10 @@ FROM demandes d
 JOIN villes v ON d.id_ville = v.id_ville
 JOIN regions r ON v.id_region = r.id_region
 GROUP BY r.nom;
+
+
+INSERT INTO users (nom, email, mot_de_passe, id_role, date_creation)
+VALUES ('Admin Test', 'admin@test.com', 'admin123', 2, NOW());
+
+INSERT INTO users (nom, email, mot_de_passe, id_role, date_creation)
+VALUES ('User Test', 'user@test.com', 'user123', 1, NOW());
