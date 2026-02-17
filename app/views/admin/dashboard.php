@@ -20,6 +20,7 @@ $actif = function ($prefix) use ($chemin_actuel) {
 
 <div class="admin2-layout">
 
+<<<<<<< HEAD
     <aside class="admin2-sidebar">
         <div class="admin2-brand" title="Admin">A</div>
 
@@ -52,6 +53,9 @@ $actif = function ($prefix) use ($chemin_actuel) {
     </svg>
 </a>
     </aside>
+=======
+    <?php require __DIR__ . '/_navbar.php'; ?>
+>>>>>>> 025ed28566aca30126e661e861179eb3adc8f551
 
     <main class="admin2-main">
 

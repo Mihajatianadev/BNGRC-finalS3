@@ -32,6 +32,7 @@ Flight::route('GET /contacts', ['ObjetController', 'showContacts']);
 
 Flight::route('GET /admin/voir-tout', ['AdminController', 'voirTout']);
 Flight::route('GET /admin/dashboard', ['AdminController', 'dashboard']);
+Flight::route('GET /admin/achats', ['AdminController', 'achats']);
 
 Flight::route('GET /demande/@id_demande', function($id_demande) {
     DemandeController::showDemandeDetail($id_demande);

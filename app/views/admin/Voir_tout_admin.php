@@ -54,14 +54,6 @@ $units = $units_st->fetchAll(PDO::FETCH_COLUMN);
                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M16 13v-2H7V8l-5 4 5 4v-3h9zm4-10H10a2 2 0 0 0-2 2v4h2V5h10v14H10v-4H8v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
             </a>
         </div>
-
-                <a class="admin2-nav-link admin2-reset" href="/admin/reset" title="Réinitialiser" onclick="return confirm('Voulez-vous vraiment réinitialiser tous les dons et demandes non par défaut ?');">
-    <svg viewBox="0 0 24 24" width="18" height="18">
-        <path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6a6 6 0 1 1-6-6zm0 14a8 8 0 1 0 0-16"/>
-    </svg>
-</a>
-
-
     </aside>
 
     <main class="admin2-main">

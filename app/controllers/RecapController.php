@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../repositories/RecapRepository.php';
+require_once __DIR__ . '/../repositories/DemandeRepository.php';
 
 class RecapController {
 
@@ -7,7 +8,12 @@ class RecapController {
         $pdo = Flight::db();
         self::exigerAdmin($pdo);
 
-        Flight::render('admin/recapitulatif', []);
+        $repoDemande = new DemandeRepository($pdo);
+        $villes = $repoDemande->listeVilles();
+
+        Flight::render('admin/recapitulatif', [
+            'villes' => $villes,
+        ]);
     }
 
     public static function getRecapJson() {
@@ -15,9 +21,15 @@ class RecapController {
         self::exigerAdmin($pdo);
 
         $repo = new RecapRepository($pdo);
-        $villes = $repo->getRecapParVille();
-        $regions = $repo->getRecapParRegion();
-        $total = $repo->getRecapTotal();
+
+        $req = Flight::request();
+        $id_ville = isset($req->query['ville']) && $req->query['ville'] !== '' ? (int)$req->query['ville'] : null;
+        $date_debut = isset($req->query['date_debut']) ? (string)$req->query['date_debut'] : '';
+        $date_fin = isset($req->query['date_fin']) ? (string)$req->query['date_fin'] : '';
+
+        $villes = $repo->getRecapParVille($id_ville, $date_debut, $date_fin);
+        $regions = $repo->getRecapParRegion($id_ville, $date_debut, $date_fin);
+        $total = $repo->getRecapTotal($id_ville, $date_debut, $date_fin);
 
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
