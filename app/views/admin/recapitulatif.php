@@ -17,28 +17,8 @@ $actif = function ($prefix) use ($chemin_actuel) {
 ?>
 
 <div class="admin2-layout">
-    <aside class="admin2-sidebar">
-        <div class="admin2-brand" title="Admin">A</div>
-        <nav class="admin2-nav">
-            <a class="admin2-nav-link <?= $actif('/admin/voir-tout') ?>" href="/admin/voir-tout" title="Accueil">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3 3 10v11h7v-7h4v7h7V10L12 3zm7 16h-3v-7H8v7H5v-8l7-5 7 5v8z"/></svg>
-            </a>
-            <a class="admin2-nav-link <?= $actif('/admin/a-propos') ?>" href="/admin/a-propos" title="A propos">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7C6.925 2 3 5.925 3 11s3.925 9 9 9 9-3.925 9-9-3.925-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
-            </a>
-            <a class="admin2-nav-link <?= $actif('/admin/dashboard') ?>" title="Demandes en attente" href="/admin/dashboard">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20 7h-2.18A3 3 0 0 0 15 5H9a3 3 0 0 0-2.82 2H4a2 2 0 0 0-2 2v2h2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9h2V9a2 2 0 0 0-2-2zM9 7h6a1 1 0 0 1 1 1v1H8V8a1 1 0 0 1 1-1zm9 14H6v-9h12v9zm2-11H4V9h16v1z"/></svg>
-            </a>
-            <a class="admin2-nav-link <?= $actif('/admin/recapitulatif') ?>" title="Récapitulatif" href="/admin/recapitulatif">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
-            </a>
-        </nav>
-        <div class="admin2-sidebar-footer">
-            <a class="admin2-logout" href="/logout" title="Déconnexion">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M16 13v-2H7V8l-5 4 5 4v-3h9zm4-10H10a2 2 0 0 0-2 2v4h2V5h10v14H10v-4H8v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
-            </a>
-        </div>
-    </aside>
+
+    <?php require __DIR__ . '/_navbar.php'; ?>
 
     <main class="admin2-main">
         <div class="admin2-topbar">
@@ -50,6 +30,29 @@ $actif = function ($prefix) use ($chemin_actuel) {
         </div>
 
         <div class="admin2-content">
+            <div class="admin2-card admin2-card-pad mb-4">
+                <form id="recap_filter" class="row g-4 align-items-end">
+                    <div class="col-lg-4">
+                        <label class="form-label">Ville</label>
+                        <select id="filtre_ville" class="form-select">
+                            <option value="">Toutes les villes</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="form-label">Date début</label>
+                        <input id="filtre_date_debut" type="date" class="form-control">
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="form-label">Date fin</label>
+                        <input id="filtre_date_fin" type="date" class="form-control">
+                    </div>
+                    <div class="col-lg-2 d-grid">
+                        <button type="submit" class="btn btn-primary">Appliquer</button>
+                    </div>
+                </form>
+                <div class="form-text">Le filtre date s'applique aux distributions et achats.</div>
+            </div>
+
             <section class="mb-5">
                 <h3 class="h5 mb-3">Par Ville</h3>
                 <div class="admin2-card">
@@ -122,6 +125,7 @@ $actif = function ($prefix) use ($chemin_actuel) {
 </div>
 
 <script>
+    window.__VILLES = <?= json_encode($villes ?? [], JSON_UNESCAPED_UNICODE) ?>;
     (function() {
         const btnRefresh = document.getElementById('btn_refresh');
         const bodyVilles = document.getElementById('body_villes');
@@ -138,7 +142,16 @@ $actif = function ($prefix) use ($chemin_actuel) {
             btnRefresh.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Actualisation...';
             
             try {
-                const res = await fetch('/api/recap');
+                const ville = (document.getElementById('filtre_ville')?.value || '').trim();
+                const dateDebut = (document.getElementById('filtre_date_debut')?.value || '').trim();
+                const dateFin = (document.getElementById('filtre_date_fin')?.value || '').trim();
+
+                const url = new URL('/api/recap', window.location.origin);
+                if (ville !== '') url.searchParams.set('ville', ville);
+                if (dateDebut !== '') url.searchParams.set('date_debut', dateDebut);
+                if (dateFin !== '') url.searchParams.set('date_fin', dateFin);
+
+                const res = await fetch(url.toString());
                 const data = await res.json();
                 
                 renderVilles(data.villes);
@@ -198,7 +211,28 @@ $actif = function ($prefix) use ($chemin_actuel) {
             }) + ' Ar';
         }
 
+        function chargerVilles() {
+            const sel = document.getElementById('filtre_ville');
+            if (!sel) return;
+            const villes = (window.__VILLES && Array.isArray(window.__VILLES)) ? window.__VILLES : [];
+            villes.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = String(v.id_ville);
+                opt.textContent = v.nom;
+                sel.appendChild(opt);
+            });
+        }
+
         btnRefresh.addEventListener('click', fetchRecap);
+        const filterForm = document.getElementById('recap_filter');
+        if (filterForm) {
+            filterForm.addEventListener('submit', function(e){
+                e.preventDefault();
+                fetchRecap();
+            });
+        }
+
+        chargerVilles();
     })();
 </script>
 </body>

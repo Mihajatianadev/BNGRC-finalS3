@@ -14,24 +14,16 @@ $villes = $st->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body class="admin2-page">
 
+<?php
+$chemin_actuel = (string)($_SERVER['REQUEST_URI'] ?? '');
+$actif = function ($prefix) use ($chemin_actuel) {
+    return strpos($chemin_actuel, $prefix) === 0 ? 'active' : '';
+};
+?>
+
 <div class="admin2-layout">
-    <aside class="admin2-sidebar">
-        <div class="admin2-brand" title="Admin">A</div>
-        <nav class="admin2-nav">
-            <a class="admin2-nav-link" href="/admin/voir-tout" title="Accueil">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3 3 10v11h7v-7h4v7h7V10L12 3zm7 16h-3v-7H8v7H5v-8l7-5 7 5v8z"/></svg>
-            </a>
-            <a class="admin2-nav-link" href="/admin/a-propos" title="A propos">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7C6.925 2 3 5.925 3 11s3.925 9 9 9 9-3.925 9-9-3.925-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
-            </a>
-            <a class="admin2-nav-link" title="Demandes en attente" href="/admin/dashboard">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20 7h-2.18A3 3 0 0 0 15 5H9a3 3 0 0 0-2.82 2H4a2 2 0 0 0-2 2v2h2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9h2V9a2 2 0 0 0-2-2zM9 7h6a1 1 0 0 1 1 1v1H8V8a1 1 0 0 1 1-1zm9 14H6v-9h12v9zm2-11H4V9h16v1z"/></svg>
-            </a>
-            <a class="admin2-nav-link" title="Récapitulatif" href="/admin/recapitulatif">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
-            </a>
-        </nav>
-    </aside>
+
+    <?php require __DIR__ . '/_navbar.php'; ?>
 
     <main class="admin2-main">
         <div class="admin2-topbar">

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../repositories/DemandeRepository.php';
+require_once __DIR__ . '/../repositories/AchatRepository.php';
 
 class AdminController {
 
@@ -88,6 +89,30 @@ class AdminController {
             'stocks' => $stocks,
             'erreur' => $erreur,
             'success' => $success,
+        ]);
+    }
+
+    public static function achats() {
+        $pdo = Flight::db();
+        self::exigerAdmin($pdo);
+
+        $repoDemande = new DemandeRepository($pdo);
+        $repoAchat = new AchatRepository($pdo);
+
+        $req = Flight::request();
+        $id_ville = isset($req->query['ville']) && $req->query['ville'] !== '' ? (int)$req->query['ville'] : null;
+        $date_debut = isset($req->query['date_debut']) ? (string)$req->query['date_debut'] : '';
+        $date_fin = isset($req->query['date_fin']) ? (string)$req->query['date_fin'] : '';
+
+        $villes = $repoDemande->listeVilles();
+        $achats = $repoAchat->listeAchats($id_ville, $date_debut, $date_fin);
+
+        Flight::render('admin/achats', [
+            'villes' => $villes,
+            'achats' => $achats,
+            'id_ville' => $id_ville,
+            'date_debut' => $date_debut,
+            'date_fin' => $date_fin,
         ]);
     }
 }
