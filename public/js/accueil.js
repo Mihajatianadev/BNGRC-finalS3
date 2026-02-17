@@ -1,7 +1,6 @@
 (function () {
   const loader = document.getElementById('vitrineLoader');
   if (loader) {
-    // Laisser le loader ~0.3s (designer) puis fade out.
     window.setTimeout(() => {
       loader.style.transition = 'opacity 220ms ease';
       loader.style.opacity = '0';
@@ -11,7 +10,6 @@
     }, 320);
   }
 
-  // Scroll reveal (IntersectionObserver)
   const revealEls = document.querySelectorAll('[data-reveal]');
   const io = new IntersectionObserver(
     (entries) => {
@@ -27,7 +25,6 @@
 
   revealEls.forEach((el) => io.observe(el));
 
-  // Parallax léger sur le hero (souris + scroll) pour un rendu premium
   const heroMedia = document.querySelector('.vitrine-hero-media');
   if (heroMedia) {
     let raf = 0;

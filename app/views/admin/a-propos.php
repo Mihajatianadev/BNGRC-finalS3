@@ -5,18 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin - A propos</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <link rel="stylesheet" href="/css/accueil.css">
 </head>
-<body class="container py-3">
+<body>
+    <main>
+                <div class="col-lg-6">
+                    <div class="vitrine-panel" data-reveal>
+                        <div class="vitrine-panel-title">Urgences en cours</div>
+                        <div class="vitrine-panel-text">Espace réservé (contenu à ajouter).</div>
+                        <a class="btn vitrine-btn-primary" href="/login">Accéder à l'espace</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
 
-<?php require __DIR__ . '/_navbar.php'; ?>
-
-<div class="p-4 bg-white rounded-3 border">
-    <h1 class="h3 mb-3">A propos</h1>
-    <p class="mb-0">
-        Espace d'administration pour visualiser les demandes par ville et suivre les distributions.
-    </p>
-</div>
-
+<footer class="vitrine-footer">
+    <div class="container">
+        <div class="vitrine-footer-inner">
+            <div class="vitrine-footer-left"> <?= date('Y') ?> BNGRC</div>
+            <div class="vitrine-footer-right">
+                <a class="vitrine-footer-link" href="/login">Se connecter</a>
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>
