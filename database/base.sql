@@ -1,6 +1,8 @@
 CREATE DATABASE IF NOT EXISTS 4106_4132_4381;
 USE 4106_4132_4381;
 
+SET NAMES utf8mb4;
+
 -- =========================
 -- TABLES
 -- =========================
@@ -138,36 +140,95 @@ INSERT INTO roles (nom_role) VALUES ('ADMIN');
 
 -- CATEGORIES
 INSERT INTO categories (nom) VALUES ('Nature');
-INSERT INTO categories (nom) VALUES ('Vetement');
-INSERT INTO categories (nom) VALUES ('Medical');
+INSERT INTO categories (nom) VALUES ('Materiel');
 INSERT INTO categories (nom) VALUES ('Argent');
 
 -- REGIONS
-INSERT INTO regions (nom) VALUES ('Analamanga');
 INSERT INTO regions (nom) VALUES ('Atsinanana');
+INSERT INTO regions (nom) VALUES ('Vatovavy');
+INSERT INTO regions (nom) VALUES ('Atsimo');
 
 -- VILLES (après les regions)
-INSERT INTO villes (nom, id_region) VALUES ('Antananarivo', 1);
-INSERT INTO villes (nom, id_region) VALUES ('Toamasina', 2);
+INSERT INTO villes (nom, id_region) VALUES ('Toamasina', 1);
+INSERT INTO villes (nom, id_region) VALUES ('Nosy Be', 1);
+INSERT INTO villes (nom, id_region) VALUES ('Mananjary', 2);
+INSERT INTO villes (nom, id_region) VALUES ('Farafangana', 3);
+INSERT INTO villes (nom, id_region) VALUES ('Morondava', 3);
 
 -- PRODUITS (après categories)
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Riz', 'Kg', 1);
-INSERT INTO produits (nom, unite, id_categorie) VALUES ('Huile', 'Litre', 1);
-INSERT INTO produits (nom, unite, id_categorie) VALUES ('Couverture', 'Piece', 2);
-INSERT INTO produits (nom, unite, id_categorie) VALUES ('Medicament', 'Boite', 3);
-INSERT INTO produits (nom, unite, id_categorie) VALUES ('Argent', 'Ar', 4);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Eau', 'L', 1);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Huile', 'L', 1);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Haricots', 'Piece', 1);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Tôle', 'Piece', 2);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Bâche', 'Piece', 2);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Bois', 'Piece', 2);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Clous', 'Kg', 2);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('groupe', 'Piece', 2);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Argent', 'Ar', 3);
 
-UPDATE produits SET prix_unitaire = 2000 WHERE nom = 'Riz';         -- / Kg
-UPDATE produits SET prix_unitaire = 5000 WHERE nom = 'Huile';       --  / Litre
-UPDATE produits SET prix_unitaire = 10000 WHERE nom = 'Couverture'; --  / Pièce
-UPDATE produits SET prix_unitaire = 16000 WHERE nom = 'Medicament'; -- / Boîte
+UPDATE produits SET prix_unitaire = 3000 WHERE nom = 'Riz';
+UPDATE produits SET prix_unitaire = 1000 WHERE nom = 'Eau';
+UPDATE produits SET prix_unitaire = 6000 WHERE nom = 'Huile';
+UPDATE produits SET prix_unitaire = 4000 WHERE nom = 'Haricots';
+UPDATE produits SET prix_unitaire = 25000 WHERE nom = 'Tôle';
+UPDATE produits SET prix_unitaire = 15000 WHERE nom = 'Bâche';
+UPDATE produits SET prix_unitaire = 10000 WHERE nom = 'Bois';
+UPDATE produits SET prix_unitaire = 8000 WHERE nom = 'Clous';
+UPDATE produits SET prix_unitaire = 6750000 WHERE nom = 'groupe';
+UPDATE produits SET prix_unitaire = 1 WHERE nom = 'Argent';
 
 -- DEMANDES
 INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
-VALUES (1, 1, 500, 1, '2026-02-16 10:00:00', 'EN_ATTENTE');
-
+VALUES ((SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Bâche' LIMIT 1), 200, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
 INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
-VALUES (2, 3, 200, 1, '2026-02-16 10:30:00', 'EN_ATTENTE');
+VALUES ((SELECT id_ville FROM villes WHERE nom='Nosy Be' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Tôle' LIMIT 1), 40, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Mananjary' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 600000, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Eau' LIMIT 1), 1500, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Nosy Be' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 300, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Mananjary' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Tôle' LIMIT 1), 80, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Nosy Be' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 400000, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Farafangana' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Bâche' LIMIT 1), 150, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Mananjary' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 500, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Farafangana' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 800000, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Morondava' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 700, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Morondava' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 1000000, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='groupe' LIMIT 1), 3, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Farafangana' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Eau' LIMIT 1), 1000, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Morondava' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Bois' LIMIT 1), 150, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 1200000, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 800, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Nosy Be' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Haricots' LIMIT 1), 200, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Morondava' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Eau' LIMIT 1), 1200, 1, '2026-02-15 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Farafangana' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 600, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Tôle' LIMIT 1), 120, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Mananjary' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Huile' LIMIT 1), 120, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 800, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Farafangana' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Bois' LIMIT 1), 100, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES ((SELECT id_ville FROM villes WHERE nom='Nosy Be' LIMIT 1), (SELECT id_produit FROM produits WHERE nom='Clous' LIMIT 1), 30, 1, '2026-02-16 00:00:00', 'EN_ATTENTE');
 
 -- =========================
 -- VUES
@@ -263,11 +324,185 @@ VALUES ('Admin Test', 'admin@test.com', 'admin123', 2, NOW());
 INSERT INTO users (nom, email, mot_de_passe, id_role, date_creation)
 VALUES ('User Test', 'user@test.com', 'user123', 1, NOW());
 
-INSERT INTO stock (id_produit, quantite_disponible)
-VALUES 
-(1, 1000),  
-(2, 500),    
-(3, 300),    
-(4, 200),
-(5, 0);    
+-- DONS (par défaut)
+-- NB: on associe ces dons à l'admin et à une ville (Toamasina) pour que les vues/recaps fonctionnent.
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  5000000, 1, '2026-02-16 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  3000000, 1, '2026-02-16 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  4000000, 1, '2026-02-17 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  1500000, 1, '2026-02-17 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  6000000, 1, '2026-02-17 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  400, 1, '2026-02-16 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Eau' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  600, 1, '2026-02-16 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Tôle' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  50, 1, '2026-02-17 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Bâche' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  70, 1, '2026-02-17 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Haricots' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  100, 1, '2026-02-17 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  2000, 1, '2026-02-18 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Tôle' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  300, 1, '2026-02-18 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Eau' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  5000, 1, '2026-02-18 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  2000000, 1, '2026-02-19 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Bâche' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  500, 1, '2026-02-19 00:00:00'
+);
+INSERT INTO dons (id_user, id_produit, id_ville, quantite, isDefault, date_don)
+VALUES (
+  (SELECT id_user FROM users WHERE email='admin@test.com' LIMIT 1),
+  (SELECT id_produit FROM produits WHERE nom='Haricots' LIMIT 1),
+  (SELECT id_ville FROM villes WHERE nom='Toamasina' LIMIT 1),
+  88, 1, '2026-02-17 00:00:00'
+);
 
+INSERT INTO stock (id_produit, quantite_disponible)
+SELECT p.id_produit, 0
+FROM produits p;
+
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 5000000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 5000000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 3000000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 3000000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 4000000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 4000000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 1500000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 1500000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 6000000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 6000000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 400)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 400;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Eau' LIMIT 1), 600)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 600;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Tôle' LIMIT 1), 50)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 50;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Bâche' LIMIT 1), 70)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 70;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Haricots' LIMIT 1), 100)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 100;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Riz' LIMIT 1), 2000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 2000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Tôle' LIMIT 1), 300)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 300;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Eau' LIMIT 1), 5000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 5000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Argent' LIMIT 1), 2000000)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 2000000;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Bâche' LIMIT 1), 500)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 500;
+ 
+INSERT INTO stock (id_produit, quantite_disponible)
+VALUES ((SELECT id_produit FROM produits WHERE nom='Haricots' LIMIT 1), 88)
+ON DUPLICATE KEY UPDATE quantite_disponible = quantite_disponible + 88;

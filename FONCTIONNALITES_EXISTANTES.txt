@@ -7,20 +7,64 @@ FONCTIONNALITES EXISTANTES (état actuel du projet)
 
 2) Base de données
 - Script: database/base.sql
-- Tables: roles, users, regions, villes, categories, produits, stock, dons, demandes, distributions
-- Vues: vue_demandes_detaillees, vue_stock_detaille, vue_demandes_en_attente, vue_demandes_par_region
+- Tables: roles, users, regions, villes, categories, produits, stock, dons, demandes, distributions, achats
+- Tables (extension stock/vente): remise, ventes
+- Colonnes de reset: isDefault sur dons/demandes/distributions/achats
+- Vues: vue_demandes_detaillees, vue_stock_detaille, vue_demandes_en_attente, vue_demandes_par_region, vue_achats_par_ville, vue_dons_argent
 
 3) Pages / Views
 - app/views/auth/register.php
 - app/views/auth/accueil.php
+- app/views/login.php
+- Admin (app/views/admin/*):
+  - Voir_tout_admin.php
+  - dashboard.php
+  - achats.php
+  - recapitulatif.php (AJAX)
+  - stock.php (vente)
+  - don-argent-saisie.php
+  - prix.php
+  - ventes.php
+  - _navbar.php (sidebar unifiée)
+  - footer.php (pied de page)
 
 4) Controllers
-- AuthController: affiche register + validation ajax + post register (implémentation en cours/à corriger selon schéma DB)
-- ObjetController: affiche accueil avec liste objets
+- AuthController:
+  - showLogin(): affiche la page login
+  - postLogin(): authentifie et crée la session
+  - logout(): détruit la session
+  - showRegister/postRegister/validateRegisterAjax(): inscription (à maintenir cohérente avec le schéma users)
+- ObjetController: pages publiques (accueil, contacts, actualités)
+- AdminController:
+  - voirTout(): page de synthèse + filtres (ville/date)
+  - dashboard(): dashboard demandes + filtres région/ville
+  - achats(): liste des achats + filtres (ville/date)
+  - stock(): affichage stock
+- RecapController:
+  - showRecap(): affiche recapitulatif
+  - getRecapJson(): API JSON filtrable (ville/date)
+- DonController:
+  - postDonGlobal(): ajout don global au stock
+  - postDonArgent(): don en argent affecté à une ville
+  - resetDons(): reset complet (non-default) + recalcul stock
+- StockController:
+  - index(): liste stocks + remise/prix
+  - vendre(): enregistre une vente + décrémente stock
+- PrixController:
+  - index(): liste produits + prix_unitaire
+  - update(): mise à jour du prix unitaire d'un produit
 
 5) Repositories / Services
 - UserRepository + UserService + Validator (inscription)
 - ObjetRepository (liste objets + image)
+- AuthService: connexion/déconnexion + session id_user/id_role
+- DemandeRepository: régions/villes/categories + dashboard + stock détaillé
+- AchatRepository: listing achats + filtres
+- RecapRepository: calculs récapitulatif (par ville/région/total) + filtres ville/date
+- DonRepository: création don + création produit/catégorie si besoin + MAJ stock
+- DonArgentRepository: ajout don argent + MAJ stock "Argent"
+- VenteRepository: gestion ventes + remises + MAJ stock + listing ventes
+- ProduitRepository: listing produits + mise à jour prix_unitaire
 
 6) Modifications / Ajouts réalisés (détaillé)
 
@@ -35,7 +79,7 @@ Pages / Views (ajouté)
 - Fichier: app/views/login.php
 - URL: /login (GET)
 - Fonctionnalité:
-  - Formulaire simple (email + mot_de_passe)
+  - Accès simplifié: bouton "COMMENCER" qui soumet automatiquement admin@test.com / admin123 (inputs hidden)
   - Affichage d'un message d'erreur global si identifiants invalides
 
 Contrôleur (modifié)
@@ -116,13 +160,25 @@ View (ajouté)
 CSS (ajouté)
 - Fichier: public/css/admin-dashboard.css
 - Rôle: styles simples (fond + arrondi cartes)
-- Inclus actuellement dans la page login (et peut être inclus aussi dans le dashboard si souhaité)
 
-6.4) Fichiers "compatibilité" demandés (ajouté)
-- Fichier: admin-dashboard.php (racine)
-- Fichier: admin dashboard.php (racine)
-- Rôle: wrappers qui chargent public/index.php.
-- Remarque: dans ce projet, l'accès normal se fait via les routes Flight, donc l'URL recommandée est /admin/dashboard.
+6.9) Stock + Ventes + Remises
+- URL: /admin/stock
+- Liste du stock détaillé (catégorie/produit/unité/quantité/prix/remise)
+- Vente (POST /admin/vente):
+  - Vérifie disponibilité stock
+  - Applique remise par catégorie (table remise)
+  - Enregistre dans ventes
+  - Décrémente le stock
+- Historique: /admin/ventes
+
+6.10) Paramétrage des prix
+- URL: /admin/prix
+- Update prix: POST /admin/prix/update
+- Modifie produits.prix_unitaire
+
+6.11) Don en argent (ville)
+- URL: /admin/don-argent (GET/POST)
+- Enregistre un don de type Argent affecté à une ville (utile pour le recap)
 
 7) Remarques techniques (important pour le groupe)
 - Le script database/base.sql définit users avec les colonnes: (id_user, nom, email, mot_de_passe, id_role, date_creation).
