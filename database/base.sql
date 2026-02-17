@@ -108,6 +108,25 @@ CREATE TABLE achats (
     FOREIGN KEY (id_user) REFERENCES users(id_user)
 );
 
+CREATE TABLE remise (
+  id_remise INT AUTO_INCREMENT PRIMARY KEY,
+  id_categorie INT NOT NULL,
+  pourcentage DECIMAL(5,2) NOT NULL,
+  motif VARCHAR(255),
+  CONSTRAINT fk_remise_categorie FOREIGN KEY (id_categorie) REFERENCES categories(id_categorie)
+);
+
+CREATE TABLE ventes (
+  id_vente INT AUTO_INCREMENT PRIMARY KEY,
+  produit_id INT NOT NULL,
+  quantite INT NOT NULL,
+  prix_unitaire DECIMAL(12,2) NOT NULL,
+  remise_pct DECIMAL(5,2) DEFAULT 0,
+  prix_final DECIMAL(12,2) NOT NULL,
+  date_vente DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX (produit_id),
+  CONSTRAINT fk_ventes_produit FOREIGN KEY (produit_id) REFERENCES produits(id_produit)
+);
 
 -- =========================
 -- INSERTS

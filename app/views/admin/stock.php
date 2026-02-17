@@ -2,43 +2,29 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin - Stock</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/admin-dashboard.css">
-    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body class="admin2-page">
 
-<?php
-$chemin_actuel = (string)($_SERVER['REQUEST_URI'] ?? '');
-$actif = function ($prefix) use ($chemin_actuel) {
-    return strpos($chemin_actuel, $prefix) === 0 ? 'active' : '';
-};
-?>
-
 <div class="admin2-layout">
-
     <?php require __DIR__ . '/_navbar.php'; ?>
 
     <main class="admin2-main">
         <div class="admin2-topbar">
             <div class="admin2-title">Stock</div>
-            <div class="admin2-search">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10 2a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 10 2zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"/></svg>
-                <input type="text" class="form-control" placeholder="rechercher" aria-label="rechercher">
-            </div>
         </div>
 
         <div class="admin2-content">
-
             <?php if (!empty($erreur)): ?>
-                <div class="alert alert-danger"><?= htmlspecialchars($erreur) ?></div>
+                <div class="alert alert-danger"><?= htmlspecialchars($erreur ?? '') ?></div>
             <?php endif; ?>
             <?php if (!empty($success)): ?>
-                <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+                <div class="alert alert-success"><?= htmlspecialchars($success ?? '') ?></div>
             <?php endif; ?>
 
+            <!-- Tableau des stocks -->
             <div class="admin2-card">
                 <div class="admin2-table-wrap">
                     <table class="table admin2-table align-middle mb-0">
@@ -48,20 +34,24 @@ $actif = function ($prefix) use ($chemin_actuel) {
                                 <th>Produit</th>
                                 <th>Unité</th>
                                 <th class="text-end">Quantité disponible</th>
+                                <th class="text-end">Prix unitaire</th>
+                                <th class="text-end">Remise (%)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($stocks)): ?>
                                 <tr>
-                                    <td colspan="4" class="text-center admin2-muted py-4">Aucun stock.</td>
+                                    <td colspan="6" class="text-center admin2-muted py-4">Aucun stock.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($stocks as $s): ?>
                                     <tr>
-                                        <td class="fw-bold"><?= htmlspecialchars($s['categorie']) ?></td>
-                                        <td><?= htmlspecialchars($s['produit']) ?></td>
-                                        <td><?= htmlspecialchars($s['unite']) ?></td>
-                                        <td class="text-end fw-bold"><?= htmlspecialchars($s['quantite_disponible']) ?></td>
+                                        <td><?= htmlspecialchars($s['categorie'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($s['produit'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($s['unite'] ?? '') ?></td>
+                                        <td class="text-end"><?= htmlspecialchars($s['quantite_disponible'] ?? '0') ?></td>
+                                        <td class="text-end"><?= number_format((float)($s['prix_unitaire'] ?? 0), 2, ',', ' ') ?> Ar</td>
+                                        <td class="text-end"><?= htmlspecialchars($s['remise_pct'] ?? '0') ?> %</td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -70,9 +60,45 @@ $actif = function ($prefix) use ($chemin_actuel) {
                 </div>
             </div>
 
+            <!-- Formulaire de vente -->
+            <div class="admin2-card admin2-card-pad mt-4">
+                <h5>Vente de produits</h5>
+                <form method="post" action="/admin/vente" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Produit</label>
+                        <select name="produit_id" id="produitSelect" class="form-select">
+                            <?php foreach ($stocks as $s): ?>
+                                <option value="<?= $s['id_produit'] ?? 0 ?>" 
+                                        data-remise="<?= $s['remise_pct'] ?? 0 ?>">
+                                    <?= htmlspecialchars($s['produit'] ?? '') ?> 
+                                    (Stock: <?= $s['quantite_disponible'] ?? 0 ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Quantité</label>
+                        <input type="number" name="quantite" class="form-control" min="1" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Remise appliquée</label>
+                        <div id="remiseAffichee" class="form-control-plaintext">0 %</div>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-success">Vendre</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </main>
 </div>
+
+<script>
+document.getElementById('produitSelect').addEventListener('change', function() {
+    let remise = this.options[this.selectedIndex].getAttribute('data-remise');
+    document.getElementById('remiseAffichee').textContent = remise + " %";
+});
+</script>
 
 </body>
 </html>
