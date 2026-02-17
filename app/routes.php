@@ -4,6 +4,7 @@ require_once __DIR__ . '/services/Validator.php';
 require_once __DIR__ . '/services/UserService.php';
 require_once __DIR__ . '/repositories/UserRepository.php';
 require_once __DIR__ . '/repositories/VenteRepository.php';
+require_once __DIR__ . '/repositories/ProduitRepository.php';
 require_once __DIR__ . '/controllers/ObjetController.php';
 require_once __DIR__ . '/controllers/DemandeController.php';
 require_once __DIR__ . '/controllers/DonController.php';
@@ -11,6 +12,7 @@ require_once __DIR__ . '/controllers/BesoinController.php';
 require_once __DIR__ . '/controllers/StockController.php';
 require_once __DIR__ . '/controllers/AdminController.php';
 require_once __DIR__ . '/controllers/RecapController.php';
+require_once __DIR__ . '/controllers/PrixController.php';
 
 // Auth
 Flight::route('GET /login', function() { (new AuthController())->showLogin(); });
@@ -68,4 +70,24 @@ Flight::route('POST /admin/vente', function() {
     $repo = new VenteRepository(Flight::db());
     $controller = new StockController($repo);
     $controller->vendre();
+});
+
+
+Flight::route('GET /admin/ventes', function() {
+    $repo = new VenteRepository(Flight::db());
+    $ventes = $repo->listeVentes();
+    Flight::render('admin/ventes', ['ventes' => $ventes]);
+});
+
+
+Flight::route('GET /admin/prix', function() {
+    $repo = new ProduitRepository(Flight::db());
+    $controller = new PrixController($repo);
+    $controller->index();
+});
+
+Flight::route('POST /admin/prix/update', function() {
+    $repo = new ProduitRepository(Flight::db());
+    $controller = new PrixController($repo);
+    $controller->update();
 });

@@ -1,10 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin - Dashboard Demandes</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body class="admin2-page">
+    <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $chemin_actuel = (string)($_SERVER['REQUEST_URI'] ?? '');
 $actif = function ($prefix) use ($chemin_actuel) {
     return strpos($chemin_actuel, $prefix) === 0 ? 'active' : '';
 };
 ?>
+
+<?php require __DIR__ . '/_navbar.php'; ?>
 
 <aside class="admin2-sidebar">
     <div class="admin2-brand" title="Admin">A</div>
@@ -28,6 +48,12 @@ $actif = function ($prefix) use ($chemin_actuel) {
 
         <a class="admin2-nav-link <?= $actif('/admin/stock') ?>" href="/admin/stock" title="Stock">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M3 7l9-4 9 4-9 4-9-4zm2 6.2V17l7 3 7-3v-3.8l-7 3-7-3z"/></svg>
+        </a>
+
+         <a class="admin2-nav-link <?= $actif('/admin/prix') ?>" href="/admin/prix" title="Prix">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path fill="currentColor" d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9zm-1-15h2v2h-2V6zm0 4h2v8h-2v-8z"/>
+            </svg>
         </a>
 
     </nav>

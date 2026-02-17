@@ -98,4 +98,16 @@ class VenteRepository {
     return $st->execute([(float)$montant, (int)$id_argent]);
 }
 
+
+    public function listeVentes() {
+        $sql = "
+            SELECT v.*, p.nom AS produit
+            FROM ventes v
+            JOIN produits p ON v.produit_id = p.id_produit
+            ORDER BY v.date_vente DESC
+        ";
+        $st = $this->pdo->query($sql);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
