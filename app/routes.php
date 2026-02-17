@@ -77,4 +77,4 @@ Flight::route('POST /admin/acheter', ['DemandeController', 'postAcheterBesoin'])
 
 Flight::route('GET /admin/stock', ['AdminController', 'stock']);
 
-Flight::route('GET /admin/reset-dons', ['DonController', 'resetDons']);
+Flight::route('GET /admin/reset', ['DonController', 'resetDons']);

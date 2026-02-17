@@ -107,14 +107,13 @@ class DonController {
     }
 
 
-    public static function resetDons() {
+public static function resetDons() {
     $pdo = Flight::db();
-    self::exigerAdmin($pdo); 
+    self::exigerAdmin($pdo); // vérifie que c'est un admin
 
     $pdo->beginTransaction();
     try {
         $pdo->exec("DELETE FROM dons WHERE isDefault = 0");
-
         $pdo->exec("DELETE FROM demandes WHERE isDefault = 0");
 
         $pdo->commit();
@@ -126,5 +125,6 @@ class DonController {
 
     Flight::redirect('/admin/voir-tout?success=' . urlencode('Tous les dons et demandes non par défaut ont été réinitialisés.'));
 }
+
 
 }

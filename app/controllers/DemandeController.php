@@ -200,8 +200,7 @@ class DemandeController {
         $id_categorie = isset($req->query['categorie']) ? (int)$req->query['categorie'] : 0;
         $produits = $id_categorie > 0 ? $repo->listeProduitsParCategorie($id_categorie) : [];
         
-        // On s'assure que le prix unitaire est présent (si possible par Repository)
-        // Sinon on le récupère ici pour l'exemple
+  
         foreach ($produits as &$p) {
             $st = $pdo->prepare('SELECT prix_unitaire FROM produits WHERE id_produit = ?');
             $st->execute([$p['id_produit']]);
