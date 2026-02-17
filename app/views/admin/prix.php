@@ -10,6 +10,8 @@
 
  
 <body class="admin2-page">
+
+<div class="admin2-layout">
         <?php require __DIR__ . '/_navbar.php'; ?>
 
 <?php
@@ -51,6 +53,7 @@ $actif = function ($prefix) use ($chemin_actuel) {
                     <td><?= htmlspecialchars($p['nom']) ?></td>
                     <td><?= htmlspecialchars($p['unite']) ?></td>
                     <td><?= number_format($p['prix_unitaire'], 2, ',', ' ') ?> Ar</td>
+                    <td><?= number_format($p['prix_unitaire'], 2, ',', ' ') ?> Ar</td>
                     <td>
                         <form method="post" action="/admin/prix/update" class="d-flex">
                             <input type="hidden" name="id_produit" value="<?= $p['id_produit'] ?>">
@@ -62,8 +65,8 @@ $actif = function ($prefix) use ($chemin_actuel) {
             <?php endforeach; ?>
         </tbody>
     </table>
+=<?php require __DIR__ . '/footer.php'; ?>
 </div>
-
-    <?php require __DIR__ . '/footer.php'; ?>
+</div>
 </body>
 </html>
