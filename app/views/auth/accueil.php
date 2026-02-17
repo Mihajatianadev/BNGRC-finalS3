@@ -138,16 +138,8 @@
     </section>
 </main>
 
-<footer class="vitrine-footer">
-    <div class="container">
-        <div class="vitrine-footer-inner">
-            <div class="vitrine-footer-left"> <?= date('Y') ?> BNGRC</div>
-            <div class="vitrine-footer-right">
-                <a class="vitrine-footer-link" href="/login">Se connecter</a>
-            </div>
-        </div>
-    </div>
-</footer>
+
+    <?php require __DIR__ . '/../admin/footer.php'; ?>
 
 <script src="/js/accueil.js"></script>
 </body>

@@ -5,7 +5,7 @@
         color: white;
         padding: 20px 0;
         font-size: 14px;
-        margin-top: 200px;
+        margin-top: 10px;
     }
 
     .vitrine-footer .vitrine-footer-inner {
