@@ -144,9 +144,6 @@ $success = (string)($_GET['success'] ?? '');
                 <?php endif; ?>
             </tbody>
         </table>
-        <div class="admin2-muted small px-3 pb-3">
-            Astuce: survole une cellule "Besoins" ou "Distribué" pour voir le contenu complet.
-        </div>
         </div>
     </div>
 
