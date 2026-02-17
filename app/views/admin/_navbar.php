@@ -1,30 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin - Dashboard Demandes</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/admin-dashboard.css">
-    <link rel="stylesheet" href="/css/login.css">
-</head>
-<body class="admin2-page">
-    <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
+<?php
 $chemin_actuel = (string)($_SERVER['REQUEST_URI'] ?? '');
 $actif = function ($prefix) use ($chemin_actuel) {
     return strpos($chemin_actuel, $prefix) === 0 ? 'active' : '';
 };
 ?>
-
-<?php require __DIR__ . '/_navbar.php'; ?>
 
 <aside class="admin2-sidebar">
     <div class="admin2-brand" title="Admin">A</div>
