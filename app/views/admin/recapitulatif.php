@@ -121,6 +121,8 @@ $actif = function ($prefix) use ($chemin_actuel) {
                 </div>
             </section>
         </div>
+
+    <?php require __DIR__ . '/footer.php'; ?>
     </main>
 </div>
 

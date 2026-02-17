@@ -6,10 +6,11 @@
     <title>Admin - Dashboard Demandes</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/admin-dashboard.css">
-    <link rel="stylesheet" href="/css/login.css">
 </head>
 
+ 
 <body class="admin2-page">
+        <?php require __DIR__ . '/_navbar.php'; ?>
 
 <?php
 ini_set('display_errors', 1);
@@ -20,9 +21,7 @@ $chemin_actuel = (string)($_SERVER['REQUEST_URI'] ?? '');
 $actif = function ($prefix) use ($chemin_actuel) {
     return strpos($chemin_actuel, $prefix) === 0 ? 'active' : '';
 };
-?>
-
-    <?php require __DIR__ . '/_navbar.php'; ?>
+?>    
 <div class="container mt-4">
     <h3>Paramétrage des prix unitaires des produits</h3>
 
@@ -65,5 +64,6 @@ $actif = function ($prefix) use ($chemin_actuel) {
     </table>
 </div>
 
+    <?php require __DIR__ . '/footer.php'; ?>
 </body>
 </html>

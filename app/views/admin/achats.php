@@ -89,6 +89,8 @@ $actif = function ($prefix) use ($chemin_actuel) {
                 </div>
             </div>
         </div>
+
+    <?php require __DIR__ . '/footer.php'; ?>
     </main>
 </div>
 
