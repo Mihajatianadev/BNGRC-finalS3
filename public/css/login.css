@@ -68,6 +68,7 @@ body.login2-page {
 
 .login2-brand-name {
   font-weight: 700;
+   margin-bottom: 50px;
   
 }
 
@@ -87,12 +88,7 @@ body.login2-page {
   max-width: 420px;
 }
 
-.login2-input .input-group-text {
-  background: #ffffff;
-  border: 1px solid var(--l2-border);
-  border-right: 0;
-  border-radius: 10px 0 0 10px;
-}
+
 
 .login2-input .form-control {
   border: 1px solid var(--l2-border);
@@ -129,6 +125,8 @@ body.login2-page {
   color: #fff;
   padding: 12px 14px;
   border-radius: 10px;
+  margin-top: 20px;
+  margin-bottom: 100px;
 }
 
 .login2-btn:hover {

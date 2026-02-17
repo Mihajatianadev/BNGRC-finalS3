@@ -19,8 +19,12 @@
 </div>
 <div class="login2-brand-name">BNGRC</div>
 
-                    <div class="login2-title">Connexion en tant qu'admin</div>
-                    <div class="login2-desc">Connectez-vous pour suivre les dons </div>
+<div class="login2-title">Distribution des dons du BNGRC</div>
+<div class="login2-desc">
+Le BNGRC organise, coordonne et optimise la distribution des dons afin de répondre rapidement aux besoins des populations touchées par les catastrophes. 
+Grâce à une gestion efficace des ressources, chaque contribution est orientée vers les zones les plus urgentes pour garantir une aide équitable, rapide et adaptée sur le terrain.
+</div>
+
 
                     <?php if (!empty($erreur_globale)): ?>
                         <div class="alert alert-danger mt-3"><?= htmlspecialchars($erreur_globale) ?></div>
@@ -33,16 +37,11 @@
                         <button class="btn login2-btn w-100" type="submit">COMMENCER</button>
                     </form>
 
-                    <div class="login2-signup">
-                        Pas de compte ?
-                        <a class="login2-link" href="#">S'inscrire</a>
-                    </div>
 
                       <div class="login2-signup">
                         <a class="login2-link" href="/accueil">Retour à l'accueil</a>
                     </div>
 
-                    <div class="login2-note">Pour tester avec base.sql : admin@test.com / admin123</div>
                 </div>
 
                 <div class="login2-right">
@@ -60,17 +59,16 @@
                         </div>
 
                         <div class="login2-divider"></div>
-<div class="login2-logos-title">PARTENAIRES & INSTITUTIONS</div>
+<div class="login2-logos-title">Actions Realisable</div>
 
 <div class="login2-logos">
     <div class="login2-logo">BNGRC</div>
-    <div class="login2-logo">Primature</div>
-    <div class="login2-logo">Ministère de l’Intérieur</div>
-    <div class="login2-logo">Météo Madagascar</div>
-    <div class="login2-logo">Protection Civile</div>
-    <div class="login2-logo">Forces de Défense</div>
-    <div class="login2-logo">Croix-Rouge</div>
-    <div class="login2-logo">ONG Humanitaires</div>
+    <div class="login2-logo">Distribution Dons</div>
+    <div class="login2-logo">Insertion des Besoins</div>
+    <div class="login2-logo">Tableau de Bord des Dons et Besoins</div>
+    <div class="login2-logo">Gestion Stock</div>
+    <div class="login2-logo">Achat Don</div>
+    <div class="login2-logo">Paramétrage des prix unitaires des produits</div>
 </div>
 
                 </div>
