@@ -248,3 +248,23 @@ VALUES
 (4, 200),
 (5, 0);    
 
+
+
+
+----------------------------------------------
+ALTER TABLE dons
+ADD COLUMN isDefault TINYINT(1) NOT NULL DEFAULT 0;
+
+ALTER TABLE demandes
+ADD COLUMN isDefault TINYINT(1) NOT NULL DEFAULT 0;
+
+
+ALTER TABLE dons DROP FOREIGN KEY dons_ibfk_2; 
+ALTER TABLE dons ADD CONSTRAINT fk_dons_produit
+FOREIGN KEY (id_produit) REFERENCES produits(id_produit)
+ON DELETE CASCADE;
+
+ALTER TABLE dons DROP FOREIGN KEY dons_ibfk_3;
+ALTER TABLE dons ADD CONSTRAINT fk_dons_ville
+FOREIGN KEY (id_ville) REFERENCES villes(id_ville)
+ON DELETE CASCADE;

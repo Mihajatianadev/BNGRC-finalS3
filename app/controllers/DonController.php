@@ -105,4 +105,26 @@ class DonController {
             exit;
         }
     }
+
+
+    public static function resetDons() {
+    $pdo = Flight::db();
+    self::exigerAdmin($pdo); 
+
+    $pdo->beginTransaction();
+    try {
+        $pdo->exec("DELETE FROM dons WHERE isDefault = 0");
+
+        $pdo->exec("DELETE FROM demandes WHERE isDefault = 0");
+
+        $pdo->commit();
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        Flight::redirect('/admin/voir-tout?erreur=' . urlencode($e->getMessage()));
+        return;
+    }
+
+    Flight::redirect('/admin/voir-tout?success=' . urlencode('Tous les dons et demandes non par défaut ont été réinitialisés.'));
+}
+
 }
