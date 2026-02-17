@@ -12,7 +12,6 @@ body.vitrine-page{
   background: var(--vit-bg);
   color: var(--vit-text);
 }
-//
 .vitrine-loader{
   position: fixed;
   inset: 0;
@@ -118,8 +117,8 @@ body.vitrine-page{
 }
 
 .vitrine-link.active{
-  background: rgba(218, 118, 11, 0.576);
-  color: rgba(8, 5, 71, 0.95);
+  background: rgba(1, 7, 42, 0.744);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .vitrine-actions{

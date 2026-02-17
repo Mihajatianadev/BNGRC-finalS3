@@ -57,6 +57,10 @@
                         <a class="login2-link" href="#">S'inscrire</a>
                     </div>
 
+                      <div class="login2-signup">
+                        <a class="login2-link" href="/accueil">Retour à l'accueil</a>
+                    </div>
+
                     <div class="login2-note">Pour tester avec base.sql : admin@test.com / admin123</div>
                 </div>
 
@@ -75,19 +79,19 @@
                         </div>
 
                         <div class="login2-divider"></div>
+<div class="login2-logos-title">PARTENAIRES & INSTITUTIONS</div>
 
-                        <div class="login2-logos-title">JOIN 1K TEAMS</div>
-                        <div class="login2-logos">
-                            <div class="login2-logo">Discord</div>
-                            <div class="login2-logo">mailchimp</div>
-                            <div class="login2-logo">grammarly</div>
-                            <div class="login2-logo">attentive</div>
-                            <div class="login2-logo">HELLOSIGN</div>
-                            <div class="login2-logo">INTERCOM</div>
-                            <div class="login2-logo">Square</div>
-                            <div class="login2-logo">Dropbox</div>
-                        </div>
-                    </div>
+<div class="login2-logos">
+    <div class="login2-logo">BNGRC</div>
+    <div class="login2-logo">Primature</div>
+    <div class="login2-logo">Ministère de l’Intérieur</div>
+    <div class="login2-logo">Météo Madagascar</div>
+    <div class="login2-logo">Protection Civile</div>
+    <div class="login2-logo">Forces de Défense</div>
+    <div class="login2-logo">Croix-Rouge</div>
+    <div class="login2-logo">ONG Humanitaires</div>
+</div>
+
                 </div>
 
             </div>

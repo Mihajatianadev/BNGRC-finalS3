@@ -71,7 +71,7 @@
             <div class="row g-4">
                 <div class="col-md-4">
                     <article class="vitrine-card" data-reveal>
-                        <div class="vitrine-card-img" style="background-image: url('');"></div>
+                        <div class="vitrine-card-img" style="background-image: url('assets/images/Sans titre.jpeg');"></div>
                         <div class="vitrine-card-body">
                             <div class="vitrine-card-title">Mobilisation du secteur privé</div>
                             <div class="vitrine-card-text">Résumé de l'action (image à ajouter).</div>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="col-md-4">
                     <article class="vitrine-card" data-reveal>
-                        <div class="vitrine-card-img" style="background-image: url('');"></div>
+                        <div class="vitrine-card-img" style="background-image: url('assets/images/Sans.jpeg');"></div>
                         <div class="vitrine-card-body">
                             <div class="vitrine-card-title">Mobilisation solidaire</div>
                             <div class="vitrine-card-text">Résumé de l'action (image à ajouter).</div>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="col-md-4">
                     <article class="vitrine-card" data-reveal>
-                        <div class="vitrine-card-img" style="background-image: url('');"></div>
+                        <div class="vitrine-card-img" style="background-image: url('assets/images/San.jpeg');"></div>
                         <div class="vitrine-card-body">
                             <div class="vitrine-card-title">Bilan & interventions</div>
                             <div class="vitrine-card-text">Résumé de l'action (image à ajouter).</div>
