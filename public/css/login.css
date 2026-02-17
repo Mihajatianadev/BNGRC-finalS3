@@ -281,3 +281,15 @@ body.login2-page {
 .login2-logo {
   opacity: 0.85;
 }
+
+
+.admin2-reset {
+  margin-top: 10px;
+    color: #ff4d4f;
+    transition: 0.3s;
+}
+
+.admin2-reset:hover {
+    background: rgba(255, 77, 79, 0.15);
+    color: #ff1f1f;
+}
