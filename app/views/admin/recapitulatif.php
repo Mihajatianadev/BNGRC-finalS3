@@ -5,7 +5,6 @@
     <title>Récapitulatif - BNGRC</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/admin-dashboard.css">
-    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body class="admin2-page">
 

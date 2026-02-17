@@ -6,7 +6,7 @@
     <title>Admin - Dashboard Demandes</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/admin-dashboard.css">
-    <link rel="stylesheet" href="/css/login.css">
+
 </head>
 <body class="admin2-page">
 
@@ -32,42 +32,41 @@ $actif = function ($prefix) use ($chemin_actuel) {
             </div>
         </div>
 
-        <div class="admin2-content">
-
-            <div class="admin2-card admin2-card-pad mb-4">
-                <form method="get" class="row g-4 align-items-end">
-                    <div class="col-md-5">
-                        <label class="form-label">Région</label>
-                        <select name="region" class="form-select">
-                            <option value="">Toutes les régions</option>
-                            <?php foreach ($regions as $region): ?>
-                                <option value="<?= (int)$region['id_region'] ?>" <?= ($id_region === (int)$region['id_region']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($region['nom']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="col-md-5">
-                        <label class="form-label">Ville</label>
-                        <select name="ville" class="form-select" <?= $id_region ? '' : 'disabled' ?>>
-                            <option value="">Toutes les villes</option>
-                            <?php foreach ($villes as $ville): ?>
-                                <option value="<?= (int)$ville['id_ville'] ?>" <?= ($id_ville === (int)$ville['id_ville']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($ville['nom']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <?php if (!$id_region): ?>
-                            <div class="form-text">Choisis d'abord une région pour activer le filtre ville.</div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="col-md-2 d-grid">
-                        <button class="btn btn-primary">Filtrer</button>
-                    </div>
-                </form>
+    <div class="admin2-content">
+    <div class="admin2-card admin2-card-pad mb-4">
+        <form method="get" class="row g-4 align-items-start">
+            <div class="col-md-5">
+                <label class="form-label">Région</label>
+                <select name="region" class="form-select">
+                    <option value="">Toutes les régions</option>
+                    <?php foreach ($regions as $region): ?>
+                        <option value="<?= (int)$region['id_region'] ?>" <?= ($id_region === (int)$region['id_region']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($region['nom']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
+            <div class="col-md-5">
+                <label class="form-label">Ville</label>
+                <select name="ville" class="form-select" <?= $id_region ? '' : 'disabled' ?>>
+                    <option value="">Toutes les villes</option>
+                    <?php foreach ($villes as $ville): ?>
+                        <option value="<?= (int)$ville['id_ville'] ?>" <?= ($id_ville === (int)$ville['id_ville']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($ville['nom']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <?php if (!$id_region): ?>
+                    <div class="form-text">Choisis d'abord une région pour activer le filtre ville.</div>
+                <?php endif; ?>
+            </div>
+            <div class="col-md-2" style  ="margin-top:50px">
+                <button class="btn btn-primary">Filtrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
             <div class="admin2-card">
                 <div class="admin2-table-wrap">
