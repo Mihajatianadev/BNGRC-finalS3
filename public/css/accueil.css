@@ -2,10 +2,11 @@
   --vit-bg: var(--l2-bg, #f6f8fa);
   --vit-text: var(--l2-text, #0d1b1e);
   --vit-muted: var(--l2-muted, rgba(13,27,30,.62));
-  --vit-border: rgba(13,27,30,.10);
-  --vit-teal: var(--l2-teal, #0b4d4b);
-  --vit-teal2: var(--l2-teal2, #0a3f3d);
+  --vit-border:  rgba(18, 13, 30, 0.12);
+  --vit-teal: var(--l2-teal, #b74604);
+  --vit-teal2: var(--l2-teal2, #120a3f);
 }
+
 
 body.vitrine-page{
   background: var(--vit-bg);
@@ -88,9 +89,7 @@ body.vitrine-page{
 .vitrine-brand-mark{
   width: 36px;
   height: 36px;
-  border-radius: 12px;
-  background: rgba(11,77,75,.10);
-  border: 1px solid rgba(11,77,75,.22);
+
 }
 
 .vitrine-brand-text{
@@ -106,7 +105,7 @@ body.vitrine-page{
 
 .vitrine-link{
   text-decoration: none;
-  color: rgba(13,27,30,.72);
+  color: rgb(7, 18, 55);
   font-weight: 700;
   font-size: 13px;
   padding: 10px 12px;
@@ -119,8 +118,8 @@ body.vitrine-page{
 }
 
 .vitrine-link.active{
-  background: rgba(11,77,75,.10);
-  color: rgba(11,77,75,.95);
+  background: rgba(218, 118, 11, 0.576);
+  color: rgba(6, 4, 57, 0.95);
 }
 
 .vitrine-actions{

@@ -2,10 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Détail de la demande & Don</title>
+    <title>Détails de la demande & Don</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/admin-dashboard.css">
-    <link rel="stylesheet" href="/css/login.css">
+ <link rel="stylesheet" href="/css/demande.css">
 </head>
 <body class="admin2-page">
 

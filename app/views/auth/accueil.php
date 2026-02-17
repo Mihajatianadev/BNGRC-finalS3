@@ -22,7 +22,9 @@
 <header class="vitrine-header">
     <div class="container-fluid vitrine-nav">
         <div class="vitrine-brand">
-            <div class="vitrine-brand-mark"></div>
+            <div class="vitrine-brand-mark">
+                  <img src="assets/images/bngrc.png" width="35" height="35" alt="BNGRC Logo" style="border-radius: 10px; object-fit: contain;">
+            </div>
             <div class="vitrine-brand-text">BNGRC</div>
         </div>
 
@@ -40,7 +42,7 @@
 
 <main>
     <section class="vitrine-hero">
-        <div class="vitrine-hero-media" style="background-image: url('');"></div>
+        <div class="vitrine-hero-media" style="background-image: url('assets/images/558306179_1339294591577261_426335191760356460_n.jpg');"></div>
         <div class="vitrine-hero-overlay"></div>
 
         <div class="container vitrine-hero-inner">
@@ -111,9 +113,17 @@
                         Pour toute information, sensibilisation ou coordination, contactez le BNGRC.
                     </p>
                     <div class="vitrine-contact" data-reveal>
-                        <div class="vitrine-contact-item">Téléphone: (à compléter)</div>
-                        <div class="vitrine-contact-item">Email: (à compléter)</div>
-                        <div class="vitrine-contact-item">Adresse: (à compléter)</div>
+                        <div class="vitrine-contact-item">Téléphone: +261 34 05 480 68 / +261 34 05 480 69</div>
+                        <div class="vitrine-contact-item">Adresse: Avaratra Antanimora Route Mausolé</div>
+                            <div class="vitrine-contact-item">Suivez nous</div>
+<div style="display: flex; gap: 10px; align-items: center;">
+    <div class="vitrine-brand-mark">
+        <img src="assets/bootstrap-icons/facebook.svg" width="35" height="35" alt="Facebook" style="border-radius: 10px; object-fit: contain;">
+    </div>
+    <div class="vitrine-brand-mark">
+        <img src="assets/bootstrap-icons/whatsapp.svg" width="35" height="35" alt="WhatsApp" style="border-radius: 10px; object-fit: contain;">
+    </div>
+</div>
                     </div>
                 </div>
                 <div class="col-lg-6">

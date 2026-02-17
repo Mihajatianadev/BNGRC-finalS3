@@ -51,10 +51,9 @@
                     <div class="vitrine-panel" data-reveal>
                         <div class="vitrine-panel-title">Coordonnées</div>
                         <div class="vitrine-contact" style="margin-top: 10px;">
-                            <div class="vitrine-contact-item">Téléphone: (à compléter)</div>
-                            <div class="vitrine-contact-item">Email: (à compléter)</div>
-                            <div class="vitrine-contact-item">Adresse: (à compléter)</div>
-                            <div class="vitrine-contact-item">Horaires: (à compléter)</div>
+                            <div class="vitrine-contact-item">Téléphone: +261 34 05 480 68 / +261 34 05 480 69</div>
+                            <div class="vitrine-contact-item">Adresse: Avaratra Antanimora Route Mausolé</div>
+                            <div class="vitrine-contact-item">Horaires: 6/7j de 08hOO à 15h00</div>
                         </div>
                     </div>
                 </div>
@@ -62,8 +61,8 @@
                 <div class="col-lg-6">
                     <div class="vitrine-panel" data-reveal>
                         <div class="vitrine-panel-title">Localisation</div>
-                        <div class="vitrine-panel-text">Espace réservé carte / image (à ajouter).</div>
-                        <div class="vitrine-card-img" style="height: 220px; border-radius: 16px; background-image: url('');"></div>
+                        <div class="vitrine-panel-text">Avaratra Antanimora Route Mausolé.</div>
+                        <div class="vitrine-card-img" style="height: 220px; border-radius: 16px; background-image: url('assets/images/558306179_1339294591577261_426335191760356460_n.jpg');"></div>
                     </div>
                 </div>
             </div>
