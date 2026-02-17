@@ -6,7 +6,13 @@ class RecapRepository {
         $this->pdo = $pdo;
     }
 
+    private function getIdProduitArgent() {
+        $st = $this->pdo->query("SELECT id_produit FROM produits WHERE nom = 'Argent' LIMIT 1");
+        return (int)$st->fetchColumn();
+    }
+
     public function getRecapParVille($id_ville = null, $date_debut = '', $date_fin = '') {
+        $id_produit_argent = $this->getIdProduitArgent();
         $sql = "
             SELECT 
                 v.id_ville,
@@ -62,17 +68,18 @@ class RecapRepository {
 
                 -- Dons reçus (argent)
                 COALESCE((
-                    SELECT SUM(da.montant)
-                    FROM vue_dons_argent da
-                    WHERE da.id_ville = v.id_ville
+                    SELECT SUM(d.quantite)
+                    FROM dons d
+                    WHERE d.id_ville = v.id_ville
+                      AND d.id_produit = $id_produit_argent
         ";
 
         if ($date_debut !== '') {
-            $sql .= ' AND DATE(da.date_don) >= ?';
+            $sql .= ' AND DATE(d.date_don) >= ?';
             $params[] = $date_debut;
         }
         if ($date_fin !== '') {
-            $sql .= ' AND DATE(da.date_don) <= ?';
+            $sql .= ' AND DATE(d.date_don) <= ?';
             $params[] = $date_fin;
         }
 
@@ -115,6 +122,7 @@ class RecapRepository {
     }
 
     public function getRecapParRegion($id_ville = null, $date_debut = '', $date_fin = '') {
+        $id_produit_argent = $this->getIdProduitArgent();
         $sql = "
             SELECT 
                 reg.nom as region,
@@ -170,10 +178,11 @@ class RecapRepository {
                     ), 0)
                 ) as besoins_satisfaits_montant,
                 COALESCE((
-                    SELECT SUM(da.montant)
-                    FROM vue_dons_argent da
-                    JOIN villes v4 ON da.id_ville = v4.id_ville
+                    SELECT SUM(don.quantite)
+                    FROM dons don
+                    JOIN villes v4 ON don.id_ville = v4.id_ville
                     WHERE v4.id_region = reg.id_region
+                      AND don.id_produit = $id_produit_argent
         ";
 
         if ($id_ville !== null) {
@@ -181,11 +190,11 @@ class RecapRepository {
             $params[] = (int)$id_ville;
         }
         if ($date_debut !== '') {
-            $sql .= ' AND DATE(da.date_don) >= ?';
+            $sql .= ' AND DATE(don.date_don) >= ?';
             $params[] = $date_debut;
         }
         if ($date_fin !== '') {
-            $sql .= ' AND DATE(da.date_don) <= ?';
+            $sql .= ' AND DATE(don.date_don) <= ?';
             $params[] = $date_fin;
         }
 
