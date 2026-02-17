@@ -27,8 +27,11 @@ $actif = function ($prefix) use ($chemin_actuel) {
             <a class="admin2-nav-link <?= $actif('/admin/a-propos') ?>" href="/admin/a-propos" title="A propos">
                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7C6.925 2 3 5.925 3 11s3.925 9 9 9 9-3.925 9-9-3.925-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
             </a>
-            <a class="admin2-nav-link <?= $actif('/admin/dashboard') ?>" href="/admin/dashboard" title="Distribuer dons">
+            <a class="admin2-nav-link <?= $actif('/admin/dashboard') ?>" title="Demandes en attente" href="/admin/dashboard">
                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20 7h-2.18A3 3 0 0 0 15 5H9a3 3 0 0 0-2.82 2H4a2 2 0 0 0-2 2v2h2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9h2V9a2 2 0 0 0-2-2zM9 7h6a1 1 0 0 1 1 1v1H8V8a1 1 0 0 1 1-1zm9 14H6v-9h12v9zm2-11H4V9h16v1z"/></svg>
+            </a>
+            <a class="admin2-nav-link <?= $actif('/admin/recapitulatif') ?>" title="Récapitulatif" href="/admin/recapitulatif">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
             </a>
         </nav>
 
@@ -75,17 +78,23 @@ $actif = function ($prefix) use ($chemin_actuel) {
                         <table class="table admin2-table align-middle mb-0">
                             <thead>
                                 <tr>
+                                    <th>Type</th>
                                     <th>Produit</th>
-                                    <th class="text-end">Quantité envoyée</th>
-                                    <th>Date de réception</th>
+                                    <th class="text-end">Quantité</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($distributions as $dist): ?>
                                     <tr>
+                                        <td>
+                                            <span class="badge <?= $dist['type'] === 'Achat' ? 'bg-primary' : 'bg-success' ?>">
+                                                <?= htmlspecialchars($dist['type']) ?>
+                                            </span>
+                                        </td>
                                         <td><?= htmlspecialchars($dist['produit'] ?? '') ?></td>
-                                        <td class="text-end"><?= htmlspecialchars($dist['quantite_envoyee'] ?? '') ?> <?= htmlspecialchars($dist['unite'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($dist['date_distribution'] ?? '') ?></td>
+                                        <td class="text-end"><strong><?= htmlspecialchars($dist['quantite'] ?? '') ?></strong> <?= htmlspecialchars($dist['unite'] ?? '') ?></td>
+                                        <td><?= htmlspecialchars($dist['date_reception'] ?? '') ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -95,53 +104,93 @@ $actif = function ($prefix) use ($chemin_actuel) {
             </div>
         </div>
 
-        <div class="admin2-card admin2-card-pad">
-        <h2 class="h5 mb-3">Faire un don pour cette demande</h2>
-        <form action="/admin/donner" method="POST">
-            <!-- ID de la demande -->
-            <input type="hidden" name="id_demande" value="<?= htmlspecialchars($demande['id_demande']) ?>">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="admin2-card admin2-card-pad h-100">
+                    <h2 class="h5 mb-3">1. Distribution par Stock</h2>
+                    <form action="/admin/donner" method="POST">
+                        <input type="hidden" name="id_demande" value="<?= htmlspecialchars($demande['id_demande']) ?>">
 
-            <div class="mb-3">
-                <label class="form-label">Catégorie</label>
-                <select id="select_categorie" name="id_categorie" class="form-select">
-                    <?php foreach ($categories as $cat): ?>
-                        <option value="<?= (int)$cat['id_categorie'] ?>" <?= ((int)$demande['id_categorie'] === (int)$cat['id_categorie']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($cat['nom']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <div class="form-text">Tu peux choisir n'importe quelle catégorie.</div>
-            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Catégorie</label>
+                            <select id="select_categorie" name="id_categorie" class="form-select">
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= (int)$cat['id_categorie'] ?>" <?= ((int)$demande['id_categorie'] === (int)$cat['id_categorie']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($cat['nom']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
 
-            <!-- Sélection du produit -->
-            <div class="mb-3">
-                <label class="form-label">Produit</label>
-                <select id="select_produit" name="id_produit" class="form-select">
-                    <?php foreach ($produits as $p): ?>
-                        <option value="<?= (int)$p['id_produit'] ?>" <?= ((int)$demande['id_produit'] === (int)$p['id_produit']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($p['nom']) ?> (<?= htmlspecialchars($p['unite']) ?>)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <div class="form-text">Le don est libre (produit au choix), mais limité par le stock disponible.</div>
-            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Produit</label>
+                            <select id="select_produit" name="id_produit" class="form-select">
+                                <?php foreach ($produits as $p): ?>
+                                    <option value="<?= (int)$p['id_produit'] ?>" <?= ((int)$demande['id_produit'] === (int)$p['id_produit']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($p['nom']) ?> (<?= htmlspecialchars($p['unite']) ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
 
-            <div class="mb-3">
-                <div class="alert alert-secondary mb-0" id="apercu_stock">
-                    Stock disponible: <strong id="stock_valeur">-</strong>
+                        <div class="mb-3">
+                            <div class="alert alert-secondary mb-0" id="apercu_stock">
+                                Stock disponible: <strong id="stock_valeur">-</strong>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Quantité à distribuer</label>
+                            <input id="input_quantite" type="number" step="0.01" class="form-control" name="quantite" required>
+                            <div class="form-text" id="texte_validation"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Distribuer du stock</button>
+                    </form>
                 </div>
             </div>
 
-            <!-- Quantité à donner -->
-            <div class="mb-3">
-                <label class="form-label">Quantité à donner</label>
-                <input id="input_quantite" type="number" step="0.01" class="form-control" name="quantite" required>
-                <div class="form-text" id="texte_validation"></div>
-            </div>
+            <div class="col-md-6">
+                <div class="admin2-card admin2-card-pad h-100">
+                    <h2 class="h5 mb-3">2. Achat par Don Argent</h2>
+                    <div class="alert alert-info mb-3">
+                        Solde ville: <strong><?= number_format($solde_ville, 2, ',', ' ') ?> Ar</strong>
+                    </div>
 
-            <!-- Bouton de soumission -->
-            <button type="submit" class="btn btn-success">Donner</button>
-        </form>
+                    <form action="/admin/acheter" method="POST">
+                        <input type="hidden" name="id_demande" value="<?= htmlspecialchars($demande['id_demande']) ?>">
+
+                        <div class="mb-3">
+                            <label class="form-label">Produit à acheter</label>
+                            <select id="select_produit_achat" name="id_produit" class="form-select">
+                                <?php foreach ($categories as $cat): ?>
+                                    <optgroup label="<?= htmlspecialchars($cat['nom']) ?>">
+                                        <?php 
+                                            // Normalement on devrait avoir les produits ici aussi via Repo
+                                            // Pour faire simple, on va réutiliser le JS pour filtrer ou charger
+                                        ?>
+                                    </optgroup>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="form-text">L'achat sera débité du solde de la ville.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="alert alert-secondary mb-0" id="apercu_prix">
+                                Prix unitaire: <strong id="prix_valeur">-</strong> Ar
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Quantité à acheter</label>
+                            <input id="input_quantite_achat" type="number" step="0.01" class="form-control" name="quantite" required>
+                            <div class="form-text">Total: <strong id="total_achat">0.00</strong> Ar</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="btn_acheter">Acheter & Distribuer</button>
+                    </form>
+                </div>
+            </div>
         </div>
     <?php else: ?>
         <div class="alert alert-warning">Aucune demande trouvée.</div>
@@ -161,9 +210,52 @@ $actif = function ($prefix) use ($chemin_actuel) {
         const texteValidation = document.getElementById('texte_validation');
         const apercuStock = document.getElementById('apercu_stock');
 
-        let stockActuel = null;
+        const selectProduitAchat = document.getElementById('select_produit_achat');
+        const prixValeur = document.getElementById('prix_valeur');
+        const inputQuantiteAchat = document.getElementById('input_quantite_achat');
+        const totalAchat = document.getElementById('total_achat');
+        const btnAcheter = document.getElementById('btn_acheter');
 
-        async function chargerProduits() {
+        let stockActuel = null;
+        let mappingProduits = {}; // id -> { prix, unite, nom }
+        let soldeVille = <?= (float)$solde_ville ?>;
+
+        async function chargerTousLesProduits() {
+            // Pour le bloc achat, on peut vouloir tous les produits
+            // ou au moins remplir le select. Ici on va le faire par catégorie pour rester cohérent.
+            
+            // On va vider et reremplir selectProduitAchat avec tous les produits de toutes les catégories
+            selectProduitAchat.innerHTML = '';
+            
+            const resCat = await fetch('/api/categories');
+            const categories = await resCat.json();
+
+            for (const cat of categories) {
+                if (cat.nom.toLowerCase() === 'argent') continue; // L'argent est le moyen de paiement, pas le produit
+
+                const group = document.createElement('optgroup');
+                group.label = cat.nom;
+                
+                const resProd = await fetch('/api/produits?categorie=' + cat.id_categorie);
+                const produits = await resProd.json();
+                
+                for (const p of produits) {
+                    const opt = document.createElement('option');
+                    opt.value = p.id_produit;
+                    // Affichage du prix unitaire directement dans le label
+                    const prixFmt = Number(p.prix_unitaire).toLocaleString('fr-FR');
+                    opt.textContent = `${p.nom} (${prixFmt} Ar / ${p.unite})`;
+                    group.appendChild(opt);
+                    
+                    mappingProduits[p.id_produit] = p;
+                }
+                selectProduitAchat.appendChild(group);
+            }
+            
+            updatePrixAchat();
+        }
+
+        async function chargerProduitsStock() {
             const idCategorie = selectCategorie.value;
             selectProduit.innerHTML = '';
 
@@ -192,44 +284,59 @@ $actif = function ($prefix) use ($chemin_actuel) {
             const data = await res.json();
             stockActuel = Number(data.quantite_disponible);
             stockValeur.textContent = isNaN(stockActuel) ? '-' : stockActuel;
-            validerQuantite();
+            validerQuantiteStock();
         }
 
-        function validerQuantite() {
-            if (stockActuel === null || isNaN(stockActuel)) {
-                texteValidation.textContent = '';
-                apercuStock.classList.remove('alert-danger');
-                apercuStock.classList.add('alert-secondary');
-                return;
-            }
-
+        function validerQuantiteStock() {
             const q = Number(inputQuantite.value);
-            if (!inputQuantite.value) {
-                texteValidation.textContent = '';
-                apercuStock.classList.remove('alert-danger');
-                apercuStock.classList.add('alert-secondary');
-                return;
-            }
-
-            if (q > stockActuel) {
+            if (stockActuel !== null && q > stockActuel) {
                 texteValidation.textContent = 'Quantité trop grande par rapport au stock.';
                 apercuStock.classList.add('alert-danger');
                 apercuStock.classList.remove('alert-secondary');
             } else {
                 texteValidation.textContent = '';
                 apercuStock.classList.remove('alert-danger');
-                apercuStock.classList.add('alert-secondary');
+                if (inputQuantite.value) apercuStock.classList.add('alert-secondary');
             }
         }
 
-        selectCategorie.addEventListener('change', chargerProduits);
+        function updatePrixAchat() {
+            const idP = selectProduitAchat.value;
+            const p = mappingProduits[idP];
+            if (p) {
+                prixValeur.textContent = p.prix_unitaire.toLocaleString('fr-FR');
+                calculerTotalAchat();
+            }
+        }
+
+        function calculerTotalAchat() {
+            const idP = selectProduitAchat.value;
+            const p = mappingProduits[idP];
+            const q = Number(inputQuantiteAchat.value);
+            if (p) {
+                const total = q * p.prix_unitaire;
+                totalAchat.textContent = total.toLocaleString('fr-FR', {minimumFractionDigits: 2});
+                
+                if (total > soldeVille) {
+                    totalAchat.parentElement.classList.add('text-danger');
+                    btnAcheter.disabled = true;
+                } else {
+                    totalAchat.parentElement.classList.remove('text-danger');
+                    btnAcheter.disabled = false;
+                }
+            }
+        }
+
+        selectCategorie.addEventListener('change', chargerProduitsStock);
         selectProduit.addEventListener('change', chargerStock);
-        inputQuantite.addEventListener('input', validerQuantite);
+        inputQuantite.addEventListener('input', validerQuantiteStock);
+
+        selectProduitAchat.addEventListener('change', updatePrixAchat);
+        inputQuantiteAchat.addEventListener('input', calculerTotalAchat);
 
         // init
-        if (selectProduit.value) {
-            chargerStock();
-        }
+        chargerProduitsStock();
+        chargerTousLesProduits();
     })();
 </script>
 </body>

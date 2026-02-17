@@ -22,6 +22,35 @@ class DemandeRepository {
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getOrCreateRegion($nom) {
+        $nom = trim((string)$nom);
+        if ($nom === '') throw new Exception('Nom région invalide.');
+
+        $st = $this->pdo->prepare('SELECT id_region FROM regions WHERE nom = ? LIMIT 1');
+        $st->execute([$nom]);
+        $id = $st->fetchColumn();
+        if ($id) return (int)$id;
+
+        $st2 = $this->pdo->prepare('INSERT INTO regions(nom) VALUES(?)');
+        $st2->execute([$nom]);
+        return (int)$this->pdo->lastInsertId();
+    }
+
+    public function getOrCreateVille($id_region, $nom) {
+        $nom = trim((string)$nom);
+        $id_region = (int)$id_region;
+        if ($nom === '' || $id_region <= 0) throw new Exception('Ville ou région invalide.');
+
+        $st = $this->pdo->prepare('SELECT id_ville FROM villes WHERE nom = ? AND id_region = ? LIMIT 1');
+        $st->execute([$nom, $id_region]);
+        $id = $st->fetchColumn();
+        if ($id) return (int)$id;
+
+        $st2 = $this->pdo->prepare('INSERT INTO villes(id_region, nom) VALUES(?, ?)');
+        $st2->execute([$id_region, $nom]);
+        return (int)$this->pdo->lastInsertId();
+    }
+
     public function listeStockDetaille() {
         $st = $this->pdo->query('
             SELECT
@@ -138,17 +167,32 @@ class DemandeRepository {
 
         $sql_distrib = "
             SELECT
-                produits.nom AS produit,
-                produits.unite,
-                distributions.quantite_envoyee,
-                distributions.date_distribution
-            FROM demandes
-            JOIN produits ON demandes.id_produit = produits.id_produit
-            JOIN distributions ON distributions.id_demande = demandes.id_demande
-            WHERE demandes.id_ville = ?
-              AND demandes.date_demande = ?
-              AND ((? IS NULL AND demandes.statut IS NULL) OR demandes.statut = ?)
-            ORDER BY distributions.date_distribution, produits.nom
+                p.nom AS produit,
+                p.unite,
+                dist.quantite_envoyee as quantite,
+                dist.date_distribution as date_reception
+            FROM demandes dem
+            JOIN produits p ON dem.id_produit = p.id_produit
+            JOIN distributions dist ON dist.id_demande = dem.id_demande
+            WHERE dem.id_ville = ?
+              AND dem.date_demande = ?
+              AND ((? IS NULL AND dem.statut IS NULL) OR dem.statut = ?)
+            
+            UNION ALL
+            
+            SELECT
+                p.nom AS produit,
+                p.unite,
+                a.quantite_achetee as quantite,
+                a.date_achat as date_reception
+            FROM demandes dem
+            JOIN produits p ON dem.id_produit = p.id_produit
+            JOIN achats a ON a.id_demande = dem.id_demande
+            WHERE dem.id_ville = ?
+              AND dem.date_demande = ?
+              AND ((? IS NULL AND dem.statut IS NULL) OR dem.statut = ?)
+              
+            ORDER BY date_reception, produit
         ";
 
         $st_besoins = $this->pdo->prepare($sql_besoins);
@@ -169,13 +213,13 @@ class DemandeRepository {
                 $besoins_txt = $besoins_txt === '' ? $part : ($besoins_txt . ' | ' . $part);
             }
 
-            $st_distrib->execute([$id_ville_ligne, $date_demande, $statut, $statut]);
+            $st_distrib->execute([$id_ville_ligne, $date_demande, $statut, $statut, $id_ville_ligne, $date_demande, $statut, $statut]);
             $distrib_rows = $st_distrib->fetchAll(PDO::FETCH_ASSOC);
 
             $distrib_txt = '';
             foreach ($distrib_rows as $drow) {
-                $date_reception = $drow['date_distribution'] ? substr((string)$drow['date_distribution'], 0, 10) : '';
-                $part = $drow['produit'] . ' : ' . $drow['quantite_envoyee'] . ' ' . $drow['unite'];
+                $date_reception = $drow['date_reception'] ? substr((string)$drow['date_reception'], 0, 10) : '';
+                $part = $drow['produit'] . ' : ' . $drow['quantite'] . ' ' . $drow['unite'];
                 if ($date_reception !== '') {
                     $part .= ' (' . $date_reception . ')';
                 }
@@ -230,19 +274,34 @@ class DemandeRepository {
     public function listeDistributionsParDemande($id_demande) {
         $this->assurerDistributionsIdProduit();
 
-        $st = $this->pdo->prepare('
+        $sql = "
             SELECT
-                distributions.id_distribution,
-                distributions.quantite_envoyee,
-                distributions.date_distribution,
-                produits.nom AS produit,
-                produits.unite
-            FROM distributions
-            JOIN produits ON distributions.id_produit = produits.id_produit
-            WHERE distributions.id_demande = ?
-            ORDER BY distributions.date_distribution DESC
-        ');
-        $st->execute([(int)$id_demande]);
+                'Distribution' as type,
+                dist.quantite_envoyee as quantite,
+                dist.date_distribution as date_reception,
+                p.nom AS produit,
+                p.unite
+            FROM distributions dist
+            JOIN produits p ON dist.id_produit = p.id_produit
+            WHERE dist.id_demande = ?
+            
+            UNION ALL
+            
+            SELECT
+                'Achat' as type,
+                a.quantite_achetee as quantite,
+                a.date_achat as date_reception,
+                p.nom AS produit,
+                p.unite
+            FROM achats a
+            JOIN produits p ON a.id_produit = p.id_produit
+            WHERE a.id_demande = ?
+            
+            ORDER BY date_reception DESC
+        ";
+        
+        $st = $this->pdo->prepare($sql);
+        $st->execute([(int)$id_demande, (int)$id_demande]);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -296,11 +355,22 @@ class DemandeRepository {
 
         $st = $this->pdo->prepare('
             SELECT
-                demandes.quantite_demandee - COALESCE(SUM(CASE WHEN distributions.id_produit = demandes.id_produit OR distributions.id_produit IS NULL THEN distributions.quantite_envoyee ELSE 0 END), 0) AS reste
+                demandes.quantite_demandee - (
+                    COALESCE((
+                        SELECT SUM(d.quantite_envoyee) 
+                        FROM distributions d 
+                        WHERE d.id_demande = demandes.id_demande 
+                          AND (d.id_produit = demandes.id_produit OR d.id_produit IS NULL)
+                    ), 0) +
+                    COALESCE((
+                        SELECT SUM(a.quantite_achetee) 
+                        FROM achats a 
+                        WHERE a.id_demande = demandes.id_demande 
+                          AND a.id_produit = demandes.id_produit
+                    ), 0)
+                ) AS reste
             FROM demandes
-            LEFT JOIN distributions ON distributions.id_demande = demandes.id_demande
             WHERE demandes.id_demande = ?
-            GROUP BY demandes.id_demande, demandes.quantite_demandee
         ');
         $st->execute([(int)$id_demande]);
         $reste = $st->fetchColumn();

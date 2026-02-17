@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../repositories/DonRepository.php';
+require_once __DIR__ . '/../repositories/DonArgentRepository.php';
 
 class DonController {
     public static function postDonGlobal() {
@@ -31,7 +32,7 @@ class DonController {
                     throw new Exception('Catégorie invalide.');
                 }
 
-                if (!in_array($unite_nouveau, ['Kg', 'L'], true)) {
+                if ($unite_nouveau === '') {
                     throw new Exception('Unité invalide.');
                 }
 
@@ -56,6 +57,31 @@ class DonController {
         }
 
         Flight::redirect('/admin/stock?success=' . urlencode('Don ajouté au stock.'));
+    }
+
+    public static function postDonArgent() {
+        $pdo = Flight::db();
+        self::exigerAdmin($pdo);
+        $repo = new DonArgentRepository($pdo);
+
+        $req = Flight::request();
+        $id_ville = (int)($req->data->id_ville ?? 0);
+        $montant = (float)($req->data->montant ?? 0);
+
+        if ($id_ville <= 0 || $montant <= 0) {
+            Flight::redirect('/admin/voir-tout?erreur=' . urlencode('Données invalides.'));
+            return;
+        }
+
+        try {
+            $id_user = (int)($_SESSION['id_user'] ?? 0);
+            $repo->ajouterDonArgent($id_ville, $montant, $id_user);
+        } catch (Exception $e) {
+            Flight::redirect('/admin/voir-tout?erreur=' . urlencode($e->getMessage()));
+            return;
+        }
+
+        Flight::redirect('/admin/voir-tout?success=' . urlencode('Don en argent enregistré.'));
     }
 
     private static function exigerAdmin(PDO $pdo) {

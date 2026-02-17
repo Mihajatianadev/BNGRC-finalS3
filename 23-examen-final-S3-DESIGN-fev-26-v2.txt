@@ -1,0 +1,67 @@
+23-examen-ﬁnal-S3-DESIGN-fev-26-v2.md
+
+2026-02-16
+
+Projet final S3 DESIGN - février 2026
+Groupe de 3
+Durée: 26h
+Début : 16 fév 26 à 13h Fin : 17 fév 26 à 16h
+
+Thème
+
+Le BNGRC souhaite créer une application de suivi des collectes et des distributions de dons pour les
+sinistrés.
+Les sinistrés sont répartis par ville dans une région. Les sinitrés ont des besoins :
+en nature (riz, huile, ... )
+en matériaux ( tôle, clou, ...)
+en argent
+
+Fonctionnement
+
+On saisit les besoins des sinistrés par ville (on n'identifie pas personnellement un sinistré). On saisit les
+dons
+On a une page pour donner les dons saisis pour un besoin. Ex: on a un besoin un riz de 10kg et on donne
+5kg.
+
+Objectifs
+
+Dans une page tableau de bord, on doit voir la liste des villes avec les besoins, et les dons attribués à
+chaque ville.
+
+Règle de gestion
+
+On affiche une erreur si la quantité donnée est supérieur aux dons. Ew: on a 100000Ar, et on donne
+300000Ar
+
+Notes
+
+A vous de créer toutes les pages nécéssaires au fonctionnement de l'application.
+Fonctionnalités
+Design (Très important!!!)
+Todo List
+Code
+
+Livraison
+
+Fichier à récupérer.
+1/2
+
+23-examen-ﬁnal-S3-DESIGN-fev-26-v2.md
+
+2026-02-16
+
+Suite V2
+
+Fonctionnement
+
+Les besoins (en nature, en matériaux) ont des prix unitaires (qui ne changent pas)
+On peut acheter via les dons en argent les besoins en nature et en matériaux selon les prix unitaires
+dits ci-dessus (saisie et liste des achats filtrables par ville à faire).
+Le tableau de bord affichera aussi les montants dʼachat faits par ville
+Créer une page de récapitulation (avec un bouton actualiser en Ajax) qui affiche :
+les besoins totaux et satisfaits en montant
+les dons reçus et dons dispatché en montant
+
+2/2
+
+

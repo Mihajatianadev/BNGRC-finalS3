@@ -23,6 +23,10 @@ $actif = function ($prefix) use ($chemin_actuel) {
 
 $erreur = (string)($_GET['erreur'] ?? '');
 $success = (string)($_GET['success'] ?? '');
+
+$pdo = Flight::db();
+$units_st = $pdo->query('SELECT DISTINCT unite FROM produits WHERE unite IS NOT NULL AND unite != "" ORDER BY unite');
+$units = $units_st->fetchAll(PDO::FETCH_COLUMN);
 ?>
 
 <div class="admin2-layout">
@@ -37,8 +41,11 @@ $success = (string)($_GET['success'] ?? '');
             <a class="admin2-nav-link <?= $actif('/admin/a-propos') ?>" href="/admin/a-propos" title="A propos">
                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M11 17h2v-6h-2v6zm0-8h2V7h-2v2zm1-7C6.925 2 3 5.925 3 11s3.925 9 9 9 9-3.925 9-9-3.925-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
             </a>
-            <a class="admin2-nav-link <?= $actif('/admin/dashboard') ?>" href="/admin/dashboard" title="Distribuer dons">
+            <a class="admin2-nav-link <?= $actif('/admin/dashboard') ?>" title="Demandes en attente" href="/admin/dashboard">
                 <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20 7h-2.18A3 3 0 0 0 15 5H9a3 3 0 0 0-2.82 2H4a2 2 0 0 0-2 2v2h2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9h2V9a2 2 0 0 0-2-2zM9 7h6a1 1 0 0 1 1 1v1H8V8a1 1 0 0 1 1-1zm9 14H6v-9h12v9zm2-11H4V9h16v1z"/></svg>
+            </a>
+            <a class="admin2-nav-link <?= $actif('/admin/recapitulatif') ?>" title="Récapitulatif" href="/admin/recapitulatif">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
             </a>
         </nav>
 
@@ -187,11 +194,12 @@ $success = (string)($_GET['success'] ?? '');
 
           <div class="col-md-6">
             <label class="form-label">Mesure (si nouveau produit)</label>
-            <select class="form-select" name="unite_nouveau">
-              <option value="">-- Choisir --</option>
-              <option value="Kg">Kg</option>
-              <option value="L">L</option>
-            </select>
+            <input class="form-control" name="unite_nouveau" list="list_units" placeholder="Ex: Kg, Ar, Litre...">
+            <datalist id="list_units">
+              <?php foreach ($units as $u): ?>
+                <option value="<?= htmlspecialchars($u) ?>">
+              <?php endforeach; ?>
+            </datalist>
           </div>
           <div class="col-md-6">
             <label class="form-label">Quantité</label>
@@ -217,13 +225,32 @@ $success = (string)($_GET['success'] ?? '');
       <div class="modal-body">
         <form method="post" action="/admin/besoin" class="row g-3">
           <div class="col-md-6">
-            <label class="form-label">Ville</label>
-            <select class="form-select" name="id_ville" required>
+            <label class="form-label">Région</label>
+            <select class="form-select" name="id_region" id="b_id_region" required>
               <option value="">-- Choisir --</option>
-              <?php foreach ($villes as $ville): ?>
-                <option value="<?= (int)$ville['id_ville'] ?>"><?= htmlspecialchars($ville['nom']) ?></option>
+              <?php
+              $repo_dem = new DemandeRepository(Flight::db());
+              $regs = $repo_dem->listeRegions();
+              foreach ($regs as $r): ?>
+                <option value="<?= (int)$r['id_region'] ?>"><?= htmlspecialchars($r['nom']) ?></option>
               <?php endforeach; ?>
+              <option value="autre">-- Autre (Nouvel) --</option>
             </select>
+          </div>
+          <div class="col-md-6" id="div_nouvelle_region" style="display:none;">
+            <label class="form-label">Nouvelle Région</label>
+            <input class="form-control" name="nouvelle_region" placeholder="Ex: Atsimo">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Ville</label>
+            <select class="form-select" name="id_ville" id="b_id_ville" required>
+              <option value="">-- Choisir Région d'abord --</option>
+            </select>
+          </div>
+          <div class="col-md-6" id="div_nouvelle_ville" style="display:none;">
+            <label class="form-label">Nouvelle Ville</label>
+            <input class="form-control" name="nouvelle_ville" placeholder="Ex: Ambovombe">
           </div>
 
           <div class="col-md-6">
@@ -243,12 +270,13 @@ $success = (string)($_GET['success'] ?? '');
             <input class="form-control" name="nom_produit" placeholder="Ex: Savon" required>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Mesure (Kg / L)</label>
-            <select class="form-select" name="unite" required>
-              <option value="">-- Choisir --</option>
-              <option value="Kg">Kg</option>
-              <option value="L">L</option>
-            </select>
+            <label class="form-label">Unité de mesure</label>
+            <input class="form-control" name="unite" list="list_units_besoin" placeholder="Ex: Kg, L, U, Boite..." required>
+            <datalist id="list_units_besoin">
+              <?php foreach ($units as $u): ?>
+                <option value="<?= htmlspecialchars($u) ?>">
+              <?php endforeach; ?>
+            </datalist>
           </div>
           <div class="col-md-6">
             <label class="form-label">Quantité demandée</label>
@@ -358,14 +386,61 @@ $success = (string)($_GET['success'] ?? '');
     });
   }
 
+  async function refreshVillesForBesoin(){
+    const regSel = document.getElementById('b_id_region');
+    const villeSel = document.getElementById('b_id_ville');
+    const divNewReg = document.getElementById('div_nouvelle_region');
+    const divNewVille = document.getElementById('div_nouvelle_ville');
+    if(!regSel || !villeSel) return;
+
+    const valReg = regSel.value;
+    if(valReg === 'autre'){
+      divNewReg.style.display = 'block';
+      divNewVille.style.display = 'block';
+      villeSel.innerHTML = '<option value="autre">-- Autre (Nouvel) --</option>';
+      villeSel.value = 'autre';
+      return;
+    }
+
+    divNewReg.style.display = 'none';
+    const idReg = parseInt(valReg || '0', 10);
+    villeSel.innerHTML = '<option value="">-- Choisir Ville --</option>';
+    
+    if(idReg > 0){
+      const villes = await fetchJson('/api/villes?region=' + idReg);
+      villes.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.id_ville;
+        opt.textContent = v.nom;
+        villeSel.appendChild(opt);
+      });
+      const optAutre = document.createElement('option');
+      optAutre.value = 'autre';
+      optAutre.textContent = '-- Autre --';
+      villeSel.appendChild(optAutre);
+    }
+    refreshNewVilleInput();
+  }
+
+  function refreshNewVilleInput(){
+    const villeSel = document.getElementById('b_id_ville');
+    const divNewVille = document.getElementById('div_nouvelle_ville');
+    if(villeSel && divNewVille){
+      divNewVille.style.display = (villeSel.value === 'autre') ? 'block' : 'none';
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function(){
     initCategories().then(refreshProduitsForDonGlobal).catch(()=>{});
+    
     const catSel = document.getElementById('dg_id_categorie');
-    if(catSel){
-      catSel.addEventListener('change', function(){
-        refreshProduitsForDonGlobal().catch(()=>{});
-      });
-    }
+    if(catSel) catSel.addEventListener('change', refreshProduitsForDonGlobal);
+
+    const bRegSel = document.getElementById('b_id_region');
+    if(bRegSel) bRegSel.addEventListener('change', refreshVillesForBesoin);
+
+    const bVilleSel = document.getElementById('b_id_ville');
+    if(bVilleSel) bVilleSel.addEventListener('change', refreshNewVilleInput);
   });
 })();
 </script>

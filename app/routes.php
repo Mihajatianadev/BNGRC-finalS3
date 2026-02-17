@@ -9,6 +9,7 @@ require_once __DIR__ . '/controllers/DonController.php';
 require_once __DIR__ . '/controllers/BesoinController.php';
 
 require_once __DIR__ . '/controllers/AdminController.php';
+require_once __DIR__ . '/controllers/RecapController.php';
 
 Flight::route('GET /login', ['AuthController', 'showLogin']);
 Flight::route('POST /login', ['AuthController', 'postLogin']);
@@ -49,6 +50,10 @@ Flight::route('GET /api/categories', function() {
     DemandeController::getCategoriesJson();
 });
 
+Flight::route('GET /api/villes', function() {
+    DemandeController::getVillesParRegionJson();
+});
+
 Flight::route('GET /api/stock/@id_produit', function($id_produit) {
     DemandeController::getStockProduitJson($id_produit);
 });
@@ -60,5 +65,15 @@ Flight::route('POST /admin/don-global', function() {
 Flight::route('POST /admin/besoin', function() {
     BesoinController::postBesoin();
 });
+
+Flight::route('POST /admin/don-argent', ['DonController', 'postDonArgent']);
+Flight::route('GET /admin/don-argent', function() {
+    Flight::render('admin/don-argent-saisie');
+});
+
+Flight::route('GET /admin/recapitulatif', ['RecapController', 'showRecap']);
+Flight::route('GET /api/recap', ['RecapController', 'getRecapJson']);
+
+Flight::route('POST /admin/acheter', ['DemandeController', 'postAcheterBesoin']);
 
 Flight::route('GET /admin/stock', ['AdminController', 'stock']);

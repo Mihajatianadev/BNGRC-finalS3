@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../repositories/DemandeRepository.php';
+require_once __DIR__ . '/../repositories/DonArgentRepository.php';
+require_once __DIR__ . '/../repositories/AchatRepository.php';
 
 class DemandeController {
 
@@ -8,6 +10,7 @@ class DemandeController {
         $pdo = Flight::db();
         self::exigerAdmin($pdo);
         $repo = new DemandeRepository($pdo);
+        $repoDonArgent = new DonArgentRepository($pdo);
 
         $demande = $repo->getInfoDemande($id_demande);
         $categories = $repo->listeCategories();
@@ -19,6 +22,11 @@ class DemandeController {
 
         $produits = $id_categorie ? $repo->listeProduitsParCategorie($id_categorie) : [];
         $distributions = $demande ? $repo->listeDistributionsParDemande((int)$demande['id_demande']) : [];
+        
+        $solde_ville = 0;
+        if ($demande) {
+            $solde_ville = $repoDonArgent->getSoldeByVille($demande['id_ville']);
+        }
 
         $erreur = (string)(Flight::request()->query['erreur'] ?? '');
 
@@ -28,6 +36,7 @@ class DemandeController {
             'produits' => $produits,
             'distributions' => $distributions,
             'erreur' => $erreur,
+            'solde_ville' => $solde_ville,
         ]);
     }
 
@@ -108,6 +117,66 @@ class DemandeController {
         Flight::redirect('/demande/' . urlencode((string)$id_demande));
     }
 
+    public static function postAcheterBesoin() {
+        $pdo = Flight::db();
+        self::exigerAdmin($pdo);
+
+        $repo = new DemandeRepository($pdo);
+        $repoDonArgent = new DonArgentRepository($pdo);
+        $repoAchat = new AchatRepository($pdo);
+        $req = Flight::request();
+
+        $id_demande = (int)($req->data->id_demande ?? 0);
+        $id_produit = (int)($req->data->id_produit ?? 0);
+        $quantite = (float)($req->data->quantite ?? 0);
+
+        if ($id_demande <= 0 || $id_produit <= 0 || $quantite <= 0) {
+            Flight::redirect('/demande/' . urlencode((string)$id_demande) . '?erreur=' . urlencode('Champs invalides.'));
+            return;
+        }
+
+        $demande = $repo->getInfoDemande($id_demande);
+        if (!$demande) {
+            Flight::redirect('/admin/dashboard');
+            return;
+        }
+
+        // Récupérer le prix unitaire du produit
+        $st = $pdo->prepare('SELECT prix_unitaire FROM produits WHERE id_produit = ?');
+        $st->execute([$id_produit]);
+        $prix_unitaire = (float)$st->fetchColumn();
+
+        $montant_total = $quantite * $prix_unitaire;
+        $solde_disponible = $repoDonArgent->getSoldeByVille($demande['id_ville']);
+
+        if ($montant_total > $solde_disponible) {
+            Flight::redirect('/demande/' . urlencode((string)$id_demande) . '?erreur=' . urlencode('Solde insuffisant pour cet achat ($montant_total Ar requis, $solde_disponible Ar dispo).'));
+            return;
+        }
+
+        $pdo->beginTransaction();
+        try {
+            $id_user = (int)$_SESSION['id_user'];
+            $repoAchat->enregistrerAchat($id_demande, $demande['id_ville'], $id_produit, $id_user, $quantite, $prix_unitaire);
+            
+            // Mettre à jour le statut de la demande
+            $reste = $repo->getResteADistribuerPourDemande($id_demande);
+            if ($reste <= 0) {
+                $repo->mettreAJourStatutDemande($id_demande, 'SATISFAITE');
+            } else {
+                $repo->mettreAJourStatutDemande($id_demande, 'EN_COURS');
+            }
+            
+            $pdo->commit();
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            Flight::redirect('/demande/' . urlencode((string)$id_demande) . '?erreur=' . urlencode('Erreur serveur: ' . $e->getMessage()));
+            return;
+        }
+
+        Flight::redirect('/demande/' . urlencode((string)$id_demande));
+    }
+
     public static function getProduitsParCategorieJson() {
         $pdo = Flight::db();
         self::exigerAdmin($pdo);
@@ -116,6 +185,14 @@ class DemandeController {
         $req = Flight::request();
         $id_categorie = isset($req->query['categorie']) ? (int)$req->query['categorie'] : 0;
         $produits = $id_categorie > 0 ? $repo->listeProduitsParCategorie($id_categorie) : [];
+        
+        // On s'assure que le prix unitaire est présent (si possible par Repository)
+        // Sinon on le récupère ici pour l'exemple
+        foreach ($produits as &$p) {
+            $st = $pdo->prepare('SELECT prix_unitaire FROM produits WHERE id_produit = ?');
+            $st->execute([$p['id_produit']]);
+            $p['prix_unitaire'] = (float)$st->fetchColumn();
+        }
 
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($produits);
@@ -147,6 +224,19 @@ class DemandeController {
 
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['id_produit' => $id_produit, 'quantite_disponible' => (float)$stock]);
+    }
+
+    public static function getVillesParRegionJson() {
+        $pdo = Flight::db();
+        self::exigerAdmin($pdo);
+
+        $repo = new DemandeRepository($pdo);
+        $req = Flight::request();
+        $id_region = isset($req->query['region']) ? (int)$req->query['region'] : 0;
+        $villes = $id_region > 0 ? $repo->listeVillesParRegion($id_region) : [];
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($villes);
     }
 
 }

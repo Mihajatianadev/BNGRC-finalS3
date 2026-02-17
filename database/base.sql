@@ -60,10 +60,12 @@ CREATE TABLE dons (
     id_don INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT NOT NULL,
     id_produit INT NOT NULL,
+    id_ville INT NULL,
     quantite DOUBLE NOT NULL,
     date_don DATETIME,
     FOREIGN KEY (id_user) REFERENCES users(id_user),
-    FOREIGN KEY (id_produit) REFERENCES produits(id_produit)
+    FOREIGN KEY (id_produit) REFERENCES produits(id_produit),
+    FOREIGN KEY (id_ville) REFERENCES villes(id_ville)
 );
 
 CREATE TABLE demandes (
@@ -85,6 +87,22 @@ CREATE TABLE distributions (
     FOREIGN KEY (id_demande) REFERENCES demandes(id_demande)
 );
 
+CREATE TABLE achats (
+    id_achat INT AUTO_INCREMENT PRIMARY KEY,
+    id_demande INT NOT NULL,
+    id_ville INT NOT NULL,
+    id_produit INT NOT NULL,
+    id_user INT NOT NULL,
+    quantite_achetee DOUBLE NOT NULL,
+    montant_total DOUBLE NOT NULL,
+    date_achat DATETIME NOT NULL,
+    FOREIGN KEY (id_demande) REFERENCES demandes(id_demande),
+    FOREIGN KEY (id_ville) REFERENCES villes(id_ville),
+    FOREIGN KEY (id_produit) REFERENCES produits(id_produit),
+    FOREIGN KEY (id_user) REFERENCES users(id_user)
+);
+
+
 -- =========================
 -- INSERTS
 -- =========================
@@ -97,6 +115,7 @@ INSERT INTO roles (nom_role) VALUES ('ADMIN');
 INSERT INTO categories (nom) VALUES ('Nature');
 INSERT INTO categories (nom) VALUES ('Vetement');
 INSERT INTO categories (nom) VALUES ('Medical');
+INSERT INTO categories (nom) VALUES ('Argent');
 
 -- REGIONS
 INSERT INTO regions (nom) VALUES ('Analamanga');
@@ -111,6 +130,7 @@ INSERT INTO produits (nom, unite, id_categorie) VALUES ('Riz', 'Kg', 1);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Huile', 'Litre', 1);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Couverture', 'Piece', 2);
 INSERT INTO produits (nom, unite, id_categorie) VALUES ('Medicament', 'Boite', 3);
+INSERT INTO produits (nom, unite, id_categorie) VALUES ('Argent', 'Ar', 4);
 
 UPDATE produits SET prix_unitaire = 2000 WHERE nom = 'Riz';         -- / Kg
 UPDATE produits SET prix_unitaire = 5000 WHERE nom = 'Huile';       --  / Litre
@@ -144,6 +164,7 @@ JOIN villes v ON d.id_ville = v.id_ville
 JOIN regions r ON v.id_region = r.id_region
 JOIN produits p ON d.id_produit = p.id_produit;
 
+
 -- Vue du stock détaillé
 CREATE VIEW vue_stock_detaille AS
 SELECT 
@@ -153,11 +174,13 @@ SELECT
 FROM stock s
 JOIN produits p ON s.id_produit = p.id_produit;
 
+
 -- Vue des demandes en attente
 CREATE VIEW vue_demandes_en_attente AS
 SELECT *
 FROM vue_demandes_detaillees
 WHERE statut = 'EN_ATTENTE';
+
 
 -- Vue des demandes par région
 CREATE VIEW vue_demandes_par_region AS
@@ -168,6 +191,45 @@ FROM demandes d
 JOIN villes v ON d.id_ville = v.id_ville
 JOIN regions r ON v.id_region = r.id_region
 GROUP BY r.nom;
+
+
+-- Vue des achats par ville
+CREATE VIEW vue_achats_par_ville AS
+SELECT 
+    v.nom AS ville,
+    p.nom AS produit,
+    a.quantite_achetee,
+    a.montant_total,
+    a.date_achat
+FROM achats a
+JOIN villes v ON a.id_ville = v.id_ville
+JOIN produits p ON a.id_produit = p.id_produit;
+
+
+-- Vue des dons en argent par ville (Dons directs + Distributions reçues de produits de type Argent)
+CREATE OR REPLACE VIEW vue_dons_argent AS
+-- 1. Dons directs à la ville
+SELECT 
+    d.id_ville,
+    d.quantite AS montant,
+    d.date_don
+FROM dons d
+JOIN produits p ON d.id_produit = p.id_produit
+JOIN categories c ON p.id_categorie = c.id_categorie
+WHERE (c.nom = 'Argent' OR p.nom = 'Argent') AND d.id_ville IS NOT NULL
+
+UNION ALL
+
+-- 2. Distributions reçues (depuis le stock global vers la ville)
+SELECT 
+    dem.id_ville,
+    dist.quantite_envoyee AS montant,
+    dist.date_distribution AS date_don
+FROM distributions dist
+JOIN demandes dem ON dist.id_demande = dem.id_demande
+JOIN produits p ON dist.id_produit = p.id_produit
+JOIN categories c ON p.id_categorie = c.id_categorie
+WHERE (c.nom = 'Argent' OR p.nom = 'Argent');
 
 
 INSERT INTO users (nom, email, mot_de_passe, id_role, date_creation)
@@ -182,3 +244,4 @@ VALUES
 (2, 500),    
 (3, 300),    
 (4, 200);    
+
