@@ -35,7 +35,7 @@
         </nav>
 
         <div class="vitrine-actions">
-            <a class="btn vitrine-btn" href="/login">Se connecter</a>
+            <a class="btn vitrine-btn vitrine-btn-cta" href="/login">Gestion Dons &amp; Besoins</a>
         </div>
     </div>
 </header>

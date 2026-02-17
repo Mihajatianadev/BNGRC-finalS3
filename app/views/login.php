@@ -27,29 +27,10 @@
                     <?php endif; ?>
 
                     <form class="login2-form" method="post" action="/login" novalidate>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <div class="input-group login2-input">
-                                <span class="input-group-text">
-                                    <span class="login2-ico"><img src="assets/bootstrap-icons/envelope-at.svg"></span>
-                                </span>
-                                <input name="email" type="email" class="form-control" placeholder="Entrer votre email" value="<?= htmlspecialchars($email ?? '') ?>" required>
-                            </div>
-                        </div>
+                        <input type="hidden" name="email" value="admin@test.com">
+                        <input type="hidden" name="mot_de_passe" value="admin123">
 
-                        <div class="mb-2">
-                            <label class="form-label">Mot de passe</label>
-                            <div class="input-group login2-input">
-                                <span class="input-group-text">
-                                    <span class="login2-ico" aria-hidden="true"><img src="assets/bootstrap-icons/lock.svg"></span>
-                                </span>
-                                <input name="mot_de_passe" type="password" class="form-control" placeholder="Entrer votre mot de passe" required>
-
-                            </div>
-                        </div>
-
-
-                        <button class="btn login2-btn w-100" type="submit">Se connecter</button>
+                        <button class="btn login2-btn w-100" type="submit">COMMENCER</button>
                     </form>
 
                     <div class="login2-signup">
