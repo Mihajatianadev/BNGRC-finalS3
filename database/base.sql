@@ -62,6 +62,7 @@ CREATE TABLE dons (
     id_produit INT NOT NULL,
     id_ville INT NULL,
     quantite DOUBLE NOT NULL,
+    isDefault TINYINT(1) NOT NULL DEFAULT 0,
     date_don DATETIME,
     FOREIGN KEY (id_user) REFERENCES users(id_user),
     FOREIGN KEY (id_produit) REFERENCES produits(id_produit),
@@ -73,6 +74,7 @@ CREATE TABLE demandes (
     id_ville INT NOT NULL,
     id_produit INT NOT NULL,
     quantite_demandee DOUBLE NOT NULL,
+    isDefault TINYINT(1) NOT NULL DEFAULT 0,
     date_demande DATETIME,
     statut VARCHAR(20),
     FOREIGN KEY (id_ville) REFERENCES villes(id_ville),
@@ -84,6 +86,7 @@ CREATE TABLE distributions (
     id_demande INT NOT NULL,
     id_produit INT NOT NULL,
     quantite_envoyee DOUBLE NOT NULL,
+    isDefault TINYINT(1) NOT NULL DEFAULT 0,
     date_distribution DATETIME,
     FOREIGN KEY (id_demande) REFERENCES demandes(id_demande),
     FOREIGN KEY (id_produit) REFERENCES produits(id_produit)
@@ -97,6 +100,7 @@ CREATE TABLE achats (
     id_user INT NOT NULL,
     quantite_achetee DOUBLE NOT NULL,
     montant_total DOUBLE NOT NULL,
+    isDefault TINYINT(1) NOT NULL DEFAULT 0,
     date_achat DATETIME NOT NULL,
     FOREIGN KEY (id_demande) REFERENCES demandes(id_demande),
     FOREIGN KEY (id_ville) REFERENCES villes(id_ville),
@@ -140,11 +144,11 @@ UPDATE produits SET prix_unitaire = 10000 WHERE nom = 'Couverture'; --  / Pièce
 UPDATE produits SET prix_unitaire = 16000 WHERE nom = 'Medicament'; -- / Boîte
 
 -- DEMANDES
-INSERT INTO demandes (id_ville, id_produit, quantite_demandee, date_demande, statut)
-VALUES (1, 1, 500, '2026-02-16 10:00:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES (1, 1, 500, 1, '2026-02-16 10:00:00', 'EN_ATTENTE');
 
-INSERT INTO demandes (id_ville, id_produit, quantite_demandee, date_demande, statut)
-VALUES (2, 3, 200, '2026-02-16 10:30:00', 'EN_ATTENTE');
+INSERT INTO demandes (id_ville, id_produit, quantite_demandee, isDefault, date_demande, statut)
+VALUES (2, 3, 200, 1, '2026-02-16 10:30:00', 'EN_ATTENTE');
 
 -- =========================
 -- VUES
@@ -248,7 +252,3 @@ VALUES
 (4, 200),
 (5, 0);    
 
-
-
-
-----------------------------------------------

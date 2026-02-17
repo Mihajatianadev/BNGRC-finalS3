@@ -113,8 +113,49 @@ public static function resetDons() {
 
     $pdo->beginTransaction();
     try {
-        $pdo->exec("DELETE FROM dons WHERE isDefault = 0");
+        // Suppression des données non-par-défaut (reset complet)
+        // Ordre important pour respecter les FK: achats -> distributions -> demandes -> dons
+        $pdo->exec("DELETE FROM achats WHERE isDefault = 0");
+        $pdo->exec("DELETE FROM distributions WHERE isDefault = 0");
         $pdo->exec("DELETE FROM demandes WHERE isDefault = 0");
+        $pdo->exec("DELETE FROM dons WHERE isDefault = 0");
+
+        // Recalcul stock depuis les données restantes (par défaut)
+        $pdo->exec('UPDATE stock SET quantite_disponible = 0');
+
+        // + Stock = + dons (par défaut)
+        $stDons = $pdo->query('SELECT id_produit, SUM(quantite) as qte FROM dons WHERE isDefault = 1 GROUP BY id_produit');
+        foreach ($stDons->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $id_produit = (int)$row['id_produit'];
+            $qte = (float)$row['qte'];
+            $stUp = $pdo->prepare('UPDATE stock SET quantite_disponible = quantite_disponible + ? WHERE id_produit = ?');
+            $stUp->execute([$qte, $id_produit]);
+        }
+
+        // + Stock = + achats (par défaut) sur produits achetés
+        // - Stock = - achats (par défaut) sur Argent (prix * quantité)
+        $id_argent = (int)$pdo->query("SELECT id_produit FROM produits WHERE nom = 'Argent' LIMIT 1")->fetchColumn();
+        $stAch = $pdo->query('SELECT id_produit, SUM(quantite_achetee) as qte, SUM(montant_total) as montant FROM achats WHERE isDefault = 1 GROUP BY id_produit');
+        foreach ($stAch->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $id_produit = (int)$row['id_produit'];
+            $qte = (float)$row['qte'];
+            $stUp = $pdo->prepare('UPDATE stock SET quantite_disponible = quantite_disponible + ? WHERE id_produit = ?');
+            $stUp->execute([$qte, $id_produit]);
+        }
+        if ($id_argent > 0) {
+            $montant = (float)$pdo->query('SELECT COALESCE(SUM(montant_total),0) FROM achats WHERE isDefault = 1')->fetchColumn();
+            $stUpArg = $pdo->prepare('UPDATE stock SET quantite_disponible = quantite_disponible - ? WHERE id_produit = ?');
+            $stUpArg->execute([$montant, $id_argent]);
+        }
+
+        // - Stock = - distributions (par défaut)
+        $stDist = $pdo->query('SELECT id_produit, SUM(quantite_envoyee) as qte FROM distributions WHERE isDefault = 1 GROUP BY id_produit');
+        foreach ($stDist->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $id_produit = (int)$row['id_produit'];
+            $qte = (float)$row['qte'];
+            $stUp = $pdo->prepare('UPDATE stock SET quantite_disponible = quantite_disponible - ? WHERE id_produit = ?');
+            $stUp->execute([$qte, $id_produit]);
+        }
 
         $pdo->commit();
     } catch (Exception $e) {
@@ -123,7 +164,7 @@ public static function resetDons() {
         return;
     }
 
-    Flight::redirect('/admin/voir-tout?success=' . urlencode('Tous les dons et demandes non par défaut ont été réinitialisés.'));
+    Flight::redirect('/admin/voir-tout?success=' . urlencode('Réinitialisation effectuée : dons/besoins/achats/distributions non par défaut supprimés et stock recalculé.'));
 }
 
 
