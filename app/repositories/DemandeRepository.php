@@ -172,8 +172,8 @@ class DemandeRepository {
                 dist.quantite_envoyee as quantite,
                 dist.date_distribution as date_reception
             FROM demandes dem
-            JOIN produits p ON dem.id_produit = p.id_produit
             JOIN distributions dist ON dist.id_demande = dem.id_demande
+            JOIN produits p ON dist.id_produit = p.id_produit
             WHERE dem.id_ville = ?
               AND dem.date_demande = ?
               AND ((? IS NULL AND dem.statut IS NULL) OR dem.statut = ?)
@@ -186,8 +186,8 @@ class DemandeRepository {
                 a.quantite_achetee as quantite,
                 a.date_achat as date_reception
             FROM demandes dem
-            JOIN produits p ON dem.id_produit = p.id_produit
             JOIN achats a ON a.id_demande = dem.id_demande
+            JOIN produits p ON a.id_produit = p.id_produit
             WHERE dem.id_ville = ?
               AND dem.date_demande = ?
               AND ((? IS NULL AND dem.statut IS NULL) OR dem.statut = ?)
@@ -330,6 +330,11 @@ class DemandeRepository {
 
     public function decrementerStock($id_produit, $quantite) {
         $st = $this->pdo->prepare('UPDATE stock SET quantite_disponible = quantite_disponible - ? WHERE id_produit = ?');
+        $st->execute([(float)$quantite, (int)$id_produit]);
+    }
+
+    public function incrementerStock($id_produit, $quantite) {
+        $st = $this->pdo->prepare('UPDATE stock SET quantite_disponible = quantite_disponible + ? WHERE id_produit = ?');
         $st->execute([(float)$quantite, (int)$id_produit]);
     }
 

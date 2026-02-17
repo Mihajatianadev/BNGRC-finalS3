@@ -38,22 +38,17 @@ class AdminController {
         $date_fin = isset($req->query['date_fin']) ? (string)$req->query['date_fin'] : '';
 
         $villes = $repo->listeVilles();
+        $categories = $repo->listeCategories();
         $lignes = $repo->listeDemandesDetaillees($id_ville, $date_debut, $date_fin);
 
         Flight::render('admin/Voir_tout_admin', [
             'villes' => $villes,
+            'categories' => $categories,
             'lignes' => $lignes,
             'id_ville' => $id_ville,
             'date_debut' => $date_debut,
             'date_fin' => $date_fin,
         ]);
-    }
-
-    public static function aPropos() {
-        $pdo = Flight::db();
-        self::exigerAdmin($pdo);
-
-        Flight::render('admin/a-propos');
     }
 
     public static function dashboard() {

@@ -1,43 +1,17 @@
-c. Page pour voir la liste des objets des autres utilisateurs
-
-i. Fiche objet
-    |
-    -affiché les objets olona connectée
-    -affiché les objets disponible 
-    -bouton envoyé demande 
-    |
-    -page profil
-    -liste de tous les échanges (en attente) (action : detail )
-    -liste de tous les échanges historique
-    |
-    -pages details des echange (accepter ou refusé) 
-
-
-Mysql
-    |
-    table utilisateurs
-    |
-    table objet 
-        _id objet
-        _id user
-        _id-catégorie
-        _detail
-        _prix-estimatif
-    |
-    table image
-        _id-image
-        _id-obj
-        _lien-image
-    |
-    table echange
-        -id-echange
-        -id-obj1
-        -id-obj2
-        -status 
-        
-
-1. Proposition d’échange avec notre objet
-d. Page pour gérer les échanges avec d’autres utilisateurs
-i. Liste des propositions
-ii. Acceptation ou refus
-
+Ligne	Partie	Catégorie	Module	Description Technique	Qui	Type	Estimation (h)
+01	1	Design	UI/UX	Conception Figma & Design System (Couleurs, Typo)	Maneva	Visuel	20h
+02	1	Web	Sécurité	Module Login (Sessions, Cryptage, Rôles Admin/User)	Mihaja	Logic	15h
+03	1	Web	Public	Page Vitrine & Actualités (Landing Page)	Mihaja	Affichage	15h
+04	1	Web	Don	Structure de base & Insertion de dons simples	Mihaja	Backend	12h
+05	1	Web	Besoin	Structure de base & Insertion de besoins simples	Mihaja	Backend	12h
+06	1	Web	Gestion	Vue de distribution des dons par ville (V1)	Mihaja	Backend	10h
+07	1	Front	Layout	Intégration du Header et de la Sidebar Dashboard	Maneva	CSS	15h
+--	--	--	--	----------------------------------------------------	--	--	--
+08	2	Web	Détails	Détails demande : Dons reçus vs Reste à distribuer	Hotiana	Backend	18h
+09	2	Web	Finances	Système de Solde par Ville (Dons Argent)	Hotiana	Logic	15h
+10	2	Logic	Achat	Module d'Achat (Transformation Argent -> Nature)	Hotiana	Backend	15h
+11	2	API	Ajax	Récapitulatif dynamique avec rafraîchissement Ajax	Hotiana	JS/API	20h
+12	2	Data	Flexibilité	Gestion des Unités dynamiques (Datalist System)	Hotiana	Backend	10h
+13	2	Data	Géographie	Création de Régions/Villes à la volée (JS/Repo)	Hotiana	Fullstack	12h
+14	2	SQL	Recap	Requêtes complexes d'agrégation (Besoins/Dons)	Hotiana	SQL	12h
+15	2	Front	Premium	Polissage UI (Gradients, Glassmorphism, Icons)	Maneva	CSS	20h

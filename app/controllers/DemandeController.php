@@ -25,7 +25,8 @@ class DemandeController {
         
         $solde_ville = 0;
         if ($demande) {
-            $solde_ville = $repoDonArgent->getSoldeByVille($demande['id_ville']);
+            $id_produit_argent = $repoDonArgent->getIdProduitArgentPublic();
+            $solde_ville = (float)($repo->getQuantiteStock($id_produit_argent) ?? 0);
         }
 
         $erreur = (string)(Flight::request()->query['erreur'] ?? '');
@@ -147,7 +148,12 @@ class DemandeController {
         $prix_unitaire = (float)$st->fetchColumn();
 
         $montant_total = $quantite * $prix_unitaire;
-        $solde_disponible = $repoDonArgent->getSoldeByVille($demande['id_ville']);
+        $id_produit_argent = $repoDonArgent->getIdProduitArgentPublic();
+        $solde_disponible = $repo->getQuantiteStock($id_produit_argent);
+        if ($solde_disponible === null) {
+            $repo->creerStockSiAbsent($id_produit_argent, 0);
+            $solde_disponible = 0.0;
+        }
 
         if ($montant_total > $solde_disponible) {
             Flight::redirect('/demande/' . urlencode((string)$id_demande) . '?erreur=' . urlencode('Solde insuffisant pour cet achat ($montant_total Ar requis, $solde_disponible Ar dispo).'));
@@ -158,6 +164,14 @@ class DemandeController {
         try {
             $id_user = (int)$_SESSION['id_user'];
             $repoAchat->enregistrerAchat($id_demande, $demande['id_ville'], $id_produit, $id_user, $quantite, $prix_unitaire);
+
+            // Débiter l'argent et augmenter le stock du produit acheté
+            $repo->decrementerStock($id_produit_argent, $montant_total);
+            $stockProduit = $repo->getQuantiteStock($id_produit);
+            if ($stockProduit === null) {
+                $repo->creerStockSiAbsent($id_produit, 0);
+            }
+            $repo->incrementerStock($id_produit, $quantite);
             
             // Mettre à jour le statut de la demande
             $reste = $repo->getResteADistribuerPourDemande($id_demande);

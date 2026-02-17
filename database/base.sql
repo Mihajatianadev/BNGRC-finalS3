@@ -82,9 +82,11 @@ CREATE TABLE demandes (
 CREATE TABLE distributions (
     id_distribution INT AUTO_INCREMENT PRIMARY KEY,
     id_demande INT NOT NULL,
+    id_produit INT NOT NULL,
     quantite_envoyee DOUBLE NOT NULL,
     date_distribution DATETIME,
-    FOREIGN KEY (id_demande) REFERENCES demandes(id_demande)
+    FOREIGN KEY (id_demande) REFERENCES demandes(id_demande),
+    FOREIGN KEY (id_produit) REFERENCES produits(id_produit)
 );
 
 CREATE TABLE achats (
@@ -243,5 +245,6 @@ VALUES
 (1, 1000),  
 (2, 500),    
 (3, 300),    
-(4, 200);    
+(4, 200),
+(5, 0);    
 

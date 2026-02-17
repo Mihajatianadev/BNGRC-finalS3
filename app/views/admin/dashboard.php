@@ -17,6 +17,7 @@ $actif = function ($prefix) use ($chemin_actuel) {
 };
 ?>
 
+
 <div class="admin2-layout">
 
     <aside class="admin2-sidebar">
